@@ -8,6 +8,11 @@ from base import Module
 class Tensor:
 
     def __init__(self, arr: np.array, requires_grad: bool = False):
+        """
+        Note that:
+        we always have `self.back_f(*self.back_childs) == self`
+        unless `self.back_f is None`
+        """
         self.data: np.array = arr
         self.requires_grad: bool = requires_grad
         self.back_f: Module | None = (
@@ -35,16 +40,16 @@ class Tensor:
 
         (dl / dA) [i,j] = (dl / dy) @ (dy / dh) @ (dh / dA[i,j])
 
-        where each component is 2-d array:
-        (dl / dy).shape = (1,n)
+        where each component is 2-d or 1-d array:
+        (dl / dy).shape = (n,)
         (dy / dh).shape = (n,k)
-        (dh / dA[i,j]).shape = (k,1)
+        (dh / dA[i,j]).shape = (k,)
         """
         assert self.data.shape == (1,), "Only scalars can do backward"
         for idx, child in enumerate(self.back_childs):
             if child.back_f is None:  # root node
                 if child.requires_grad:
-                    assert child.ndim <= 2, "parameters should have ndim <= 2"
+                    assert child.ndim <= 2, "Parameters should have ndim <= 2"
                     # multivariable function, detivate of idx-th variable
                     child.grad = self.back_f.gradient(self.back_childs, idx)
                 else:
@@ -53,7 +58,7 @@ class Tensor:
                 child._bp(self.back_f.gradient(self.back_childs, idx))
 
     def _bp(self, grad: np.ndarray):
-        """gradient back propagation calculation"""
+        """private gradient back propagation calculation"""
         assert grad.ndim <= 2, grad.shape
         assert self.ndim == 1, f"Only vectors can do _bp, {self.ndim = }"
         for idx, child in enumerate(self.back_childs):
@@ -68,6 +73,8 @@ class Tensor:
                         child.grad = np.zeros_like(child)
                         for i in range(child.shape[0]):
                             for j in range(child.shape[1]):
+                                # back_f is a function: f(X1,X2,X3,...) map X into R^m
+                                # we calcute detivates w.r.t. X[idx][i,j], which is a vector in R^m
                                 child.grad[i, j] = grad @ self.back_f.gradient(
                                     self.back_childs, idx, i, j
                                 )
@@ -76,12 +83,12 @@ class Tensor:
             else:
                 # just like
                 # (dl / dA) [i,j] = (dl / dy) @ (dy / dh) @ (dh / dA[i,j])
-                # we recursively propagate gradient
+                # we **recursively** propagate gradient
                 child._bp(grad @ self.back_f.gradient(self.back_childs, idx))
 
     def __getattr__(self, name: str):
         """
-        When attr not defined, try to find in `self.data`, for example `self.shape`
+        When attr not defined, try to find in `self.data`, for example `self.shape` or `self.ndim`
         """
         return self.data.__getattribute__(name)
 

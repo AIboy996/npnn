@@ -3,25 +3,24 @@
 import numpy as np
 
 from autograd import Tensor
-from base import Module
-
+from base import Module, NeuralNetwork
 
 ## basic functions
 class Add(Module):
     """z = x + y"""
 
-    def forward(self, x, y) -> Tensor:
+    def forward(self, x: Tensor, y: Tensor) -> Tensor:
         res = Tensor(x.data + y.data)
         res.back_f = self
         res.back_childs = (x, y)
         return res
 
-    def gradient(self, x: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
         """
         1. `d(X+Y) / dX = \mathbb{I} \otimes \mathbb{I}` if X is matrix
         2. `d(x+y) / dx = \mathbb{I}` if x is vector
         """
-        x = x[idx]
+        x = back_childs[idx]
         assert x.ndim <= 2
         if x.ndim == 2:
             res = np.zeros_like(x)
@@ -31,27 +30,45 @@ class Add(Module):
             return np.eye(*x.shape)
 
 
-class RightMultiply(Module):
-    """y = Xc"""
+class Inner(Module):
+    """
+    z = x @ y where z is vector or scalar
+    """
 
-    def __init__(self, multiplier) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.multiplier = multiplier
 
-    def forward(self, x: Tensor) -> Tensor:
-        res = Tensor(x.data @ self.multiplier)
+    def forward(self, x: Tensor, y: Tensor) -> Tensor:
+        res = Tensor(x.data @ y.data)
+        assert res.ndim == 1, "result should be vector or scalar"
         res.back_f = self
-        res.back_childs = (x,)
+        res.back_childs = (x, y)
         return res
 
-    def gradient(self, x, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
         """
-        dXc / dX[i,j] = [0,...,c[k],... ,0], where c[k] is the ith component
-        or in tensor product: `dXc / dX = c' \otimes \mathbb{I}`
+        if x is matrix
+        d x@y / dx[i,j] = [0,...,y[j],... ,0], where y[j] is the ith component
+        or in tensor product: `d x@y / dX = c' \otimes \mathbb{I}`
+
+        elif x is vector
+        d x@y / dx = y.T
         """
-        res = np.zeros((x[idx].shape[0],))
-        res[i] = self.multiplier[j]
-        return res
+        x, y = back_childs
+        if idx == 0:
+            if x.data.ndim == 1:
+                return y.data.T
+            else:
+                res = np.zeros((x.shape[0],))
+                res[i] = y.data[j]
+                return res
+        else:
+            if y.data.ndim == 1:
+                return x.data
+            else:
+                res = np.zeros((x.shape[0],))
+                res[j] = x.data[i]
+                return res
 
 
 ## loss functions
@@ -67,9 +84,9 @@ class Sum(Module):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, x: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
         """Easy"""
-        return np.ones_like(x[idx])
+        return np.ones_like(back_childs[idx])
 
 
 class Norm(Module):
@@ -90,13 +107,13 @@ class Norm(Module):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, x, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
         """
         `d norm2(x) / dx = x / norm2(x)`
         """
-        x = x[idx]
-        y = self.forward(x).data
-        return x.data / y
+        x = back_childs[idx]
+        y = self.forward(x)
+        return x.data / y.data
 
 
 class NLL(Module):
@@ -114,11 +131,11 @@ class NLL(Module):
         res.back_childs = (x, y)
         return res
 
-    def gradient(self, x: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
         """
         dl / dx = -y, dl / dy = -x
         """
-        return -x[1 - idx]
+        return -back_childs[1 - idx]
 
 
 ## activation functions
@@ -137,11 +154,11 @@ class Log(Module):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, x: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
         """
         dy / dx = diag(1/x)
         """
-        return np.diag(1 / x[idx].data)
+        return np.diag(1 / back_childs[idx].data)
 
 
 class Softamx(Module):
@@ -160,8 +177,8 @@ class Softamx(Module):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, x, idx=0, i=None, j=None) -> np.ndarray:
-        x = x[idx]
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+        x = back_childs[idx]
         n = x.shape[0]
         y = self.forward(x).data
         grad = np.zeros((n, n))
@@ -186,8 +203,8 @@ class ReLU(Module):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, x, idx=0, i=None, j=None) -> np.ndarray:
-        x = x[idx].data
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+        x = back_childs[idx].data
         grad = np.zeros_like(x)
         grad[x > 0] = 1
         return np.diag(grad)
