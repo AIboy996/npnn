@@ -3,10 +3,11 @@ In this file we test nnn api, compared with torch api ^&^.
 """
 
 import unittest
+import numpy as np
 from numpy.random import random
 
 from autograd import Tensor
-from nn import *
+from functional import *
 
 import torch  # only for test, ensure computation of nnn is right
 
@@ -61,9 +62,9 @@ class TestAutograd(unittest.TestCase):
         c_grad_torch = c.grad.numpy()
 
         # check float almost equal
-        self.assertTrue(np.isclose(A_grad_nnn, A_grad_torch).all())
-        self.assertTrue(np.isclose(B_grad_nnn, B_grad_torch).all())
-        self.assertTrue(np.isclose(c_grad_nnn, c_grad_torch).all())
+        self.assertTrue(np.allclose(A_grad_nnn, A_grad_torch))
+        self.assertTrue(np.allclose(B_grad_nnn, B_grad_torch))
+        self.assertTrue(np.allclose(c_grad_nnn, c_grad_torch))
 
     def test_Activation(self):
         """
@@ -74,7 +75,7 @@ class TestAutograd(unittest.TestCase):
         by calcuting dy/dA and dy/db.
         """
         for act_nnn, act_torch in [
-            (Softamx(), torch.nn.Softmax(dim=0)),
+            (Softmax(), torch.nn.Softmax(dim=0)),
             (ReLU(), torch.relu),
         ]:
             # nnn api
@@ -101,8 +102,8 @@ class TestAutograd(unittest.TestCase):
             A_grad_torch = A.grad.numpy()
             b_grad_torch = b.grad.numpy()
             # check float almost equal
-            self.assertTrue(np.isclose(A_grad_nnn, A_grad_torch).all())
-            self.assertTrue(np.isclose(b_grad_nnn, b_grad_torch).all())
+            self.assertTrue(np.allclose(A_grad_nnn, A_grad_torch))
+            self.assertTrue(np.allclose(b_grad_nnn, b_grad_torch))
 
     def test_Loss(self):
         """
@@ -146,13 +147,13 @@ class TestAutograd(unittest.TestCase):
         b_grad_torch = b.grad.numpy()
 
         # check float almost equal
-        self.assertTrue(np.isclose(A_grad_nnn, A_grad_torch).all())
-        self.assertTrue(np.isclose(b_grad_nnn, b_grad_torch).all())
+        self.assertTrue(np.allclose(A_grad_nnn, A_grad_torch))
+        self.assertTrue(np.allclose(b_grad_nnn, b_grad_torch))
 
     def test_NN(self):
         """
         Test a Neural Network with 3-hidden layers:
-        
+
         h1 = relu(A @ x + a)
         h2 = relu(B @ h1 + b)
         y_hat = relu(C @ h2 + c)
@@ -207,7 +208,7 @@ class TestAutograd(unittest.TestCase):
 
         # check float almost equal
         for g1, g2 in zip(nnn_grad, torch_grad):
-            self.assertTrue(np.isclose(g1, g2).all())
+            self.assertTrue(np.allclose(g1, g2))
 
 
 if __name__ == "__main__":

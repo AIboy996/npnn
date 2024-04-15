@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from base import Module
+from base import Operation
 
 
 class Tensor:
@@ -15,7 +15,7 @@ class Tensor:
         """
         self.data: np.array = arr
         self.requires_grad: bool = requires_grad
-        self.back_f: Module | None = (
+        self.back_f: Operation | None = (
             None  # this indicates root node of the computional graph
         )
         self.back_childs: tuple[Tensor] = (self,)  # child nodes
@@ -104,8 +104,7 @@ class Tensor:
 
 
 if __name__ == "__main__":
-    from nn import *
-    import torch
+    from nnn.functional import *
 
     x = Tensor(np.random.random((3,)), requires_grad=True)
     print(x, -x, sep="\n")

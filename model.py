@@ -2,7 +2,8 @@
 
 import numpy as np
 
-import nnn.nn as nn
+from nnn import nn
+from nnn import functional as F
 
 class NeuralNetwork(nn.Module):
     def __init__(self):
@@ -10,11 +11,12 @@ class NeuralNetwork(nn.Module):
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(28*28, 512),
-            nn.ReLU(),
+            F.ReLU(),
             nn.Linear(512, 512),
-            nn.ReLU(),
+            F.ReLU(),
             nn.Linear(512, 10),
-            nn.Softamx()
+            F.Softmax(),
+            F.Log()
         )
 
     def forward(self, x):

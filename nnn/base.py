@@ -1,7 +1,7 @@
 """base template"""
 import numpy as np
 
-class Module:
+class Operation:
 
     def __init__(self) -> None:
         super().__init__()
@@ -17,13 +17,14 @@ class Module:
         """Gradietn function"""
         raise NotImplementedError
 
-class NeuralNetwork(Module):
+class Module:
 
     def __init__(self) -> None:
         super().__init__()
 
-    def gradient(self):
-        raise NotImplementedError("NN don't have gradient.")
+    def __call__(self, *x):
+        """Forward call"""
+        return self.forward(*x)
     
     def parameters(self) -> tuple:
         """Return all parameters to be optimized."""
