@@ -14,6 +14,7 @@ class NeuralNetwork(nn.Module):
             nn.Linear(512, 512),
             nn.ReLU(),
             nn.Linear(512, 10),
+            nn.Softamx()
         )
 
     def forward(self, x):

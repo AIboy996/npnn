@@ -50,8 +50,7 @@ class Tensor:
                 else:
                     pass
             else:
-                grad = self.back_f.gradient(self.back_childs, idx)
-                child._bp(grad)
+                child._bp(self.back_f.gradient(self.back_childs, idx))
 
     def _bp(self, grad: np.ndarray):
         """gradient back propagation calculation"""
@@ -75,7 +74,10 @@ class Tensor:
                 else:
                     pass
             else:
-                child._bp(self.back_f.gradient(self.back_childs, idx))
+                # just like
+                # (dl / dA) [i,j] = (dl / dy) @ (dy / dh) @ (dh / dA[i,j])
+                # we recursively propagate gradient
+                child._bp(grad @ self.back_f.gradient(self.back_childs, idx))
 
     def __getattr__(self, name: str):
         """
@@ -84,17 +86,19 @@ class Tensor:
         return self.data.__getattribute__(name)
 
     def __repr__(self) -> str:
-        return f"Tensor({self.data}, requires_grad={self.requires_grad})"
+        return f"tensor({self.data}, requires_grad={self.requires_grad}, back_f={self.back_f})"
+
+    def __neg__(self):
+        """This will set requires_grad to False"""
+        t = Tensor(-self.data)
+        t.backf = self.back_f
+        t.back_childs = self.back_childs
+        return t
 
 
 if __name__ == "__main__":
     from nn import *
+    import torch
 
-    A = Tensor(np.random.random((3,3)), requires_grad=True)
-    b = Tensor(np.random.random((3,)), requires_grad=True)
-    mul = RightMultiply(np.random.random((3,)))
-    sum = Sum(); add = Add()
-    y = sum(add(mul(A), b))
-    y.backward()
-    # print(A.grad, b.grad)
-    # print(mul.multiplier, t, t.grad, mul.multiplier.sum(axis=0))
+    x = Tensor(np.random.random((3,)), requires_grad=True)
+    print(x, -x, sep="\n")
