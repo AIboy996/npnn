@@ -44,4 +44,5 @@ class Optimizer:
 
     def zero_grad(self):
         """Only should call this if you want to perform mini-batch gradient descent."""
-        raise NotImplementedError
+        for param in self.params:
+            param.grad = np.zeros_like(param.data)

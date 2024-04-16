@@ -14,7 +14,7 @@ NUM_CLASS = 10
 model = FNN(
     in_size=IMAGE_SIZE,
     out_size=NUM_CLASS,
-    hidden_size=[512, 256],
+    hidden_size=[256],
     activation=F.ReLU,
 )
 optimizer = Adam(model.parameters(), lr=0.001)
@@ -27,17 +27,18 @@ train_labels_onehot = F.one_hot(train_labels, NUM_CLASS)
 # this is equivalent to CrossEntropy Loss
 criterion = F.NLL()
 
-for epoch in range(2):
+for epoch in range(1):
     epoch_loss = 0
     dataset_size = len(train_images)
-    for x, y in zip(train_images, train_labels_onehot):
+    for x, y in zip(train_images, train_labels_onehot[:1, :]):
         y_hat = model(Tensor(x))
         y = Tensor(y)
         loss = criterion(y_hat, y)
+        optimizer.zero_grad()
         loss.backward()
         epoch_loss += loss.data
         optimizer.step()
     epoch_loss /= dataset_size
     print(f"{epoch_loss=}")
-    accuracy = test_model(model)
-    print(f"{accuracy=}")
+    # accuracy = test_model(model)
+    # print(f"{accuracy=}")

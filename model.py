@@ -33,12 +33,14 @@ class FNN(nn.Module):
 
 
 def test_NeuralNetwork():
+    np.random.seed(0)
     model = FNN(28*28, 10)
     x = Tensor(np.random.random((1, 28, 28)))
     logits = model(x)
     l = F.Norm()(logits)
     l.backward()
     print(model)
+    print(model.parameters()[-1].grad)
     print(l)
 
 

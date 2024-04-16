@@ -24,7 +24,11 @@ class Tensor:
             None  # this indicates root node of the computional graph
         )
         self.back_childs: tuple[Tensor] = (self,)  # child nodes
-        self.grad: np.array | None = None  # calcute grad if requires_grad = True
+        if requires_grad:
+            # initialize grad if requires_grad = True
+            self.grad = np.zeros_like(arr)
+        else:
+            self.grad = None
 
     def backward(self):
         """
@@ -56,7 +60,7 @@ class Tensor:
                 if child.requires_grad:
                     assert child.ndim <= 2, "Parameters should have ndim <= 2"
                     # multivariable function, detivate of idx-th variable
-                    child.grad = self.back_f.gradient(self.back_childs, idx)
+                    child.grad += self.back_f.gradient(self.back_childs, idx)
                 else:
                     pass
             else:
@@ -72,15 +76,14 @@ class Tensor:
                     assert child.ndim <= 2, "parameters should have ndim <= 2"
                     # parameter is vector
                     if child.ndim == 1:
-                        child.grad = grad @ self.back_f.gradient(self.back_childs, idx)
+                        child.grad += grad @ self.back_f.gradient(self.back_childs, idx)
                     # parameter is matrix
                     elif child.ndim == 2:
-                        child.grad = np.zeros_like(child)
                         for i in range(child.shape[0]):
                             for j in range(child.shape[1]):
                                 # back_f is a function: f(X1,X2,X3,...) map X into R^m
                                 # we calcute detivates w.r.t. X[idx][i,j], which is a vector in R^m
-                                child.grad[i, j] = grad @ self.back_f.gradient(
+                                child.grad[i, j] += grad @ self.back_f.gradient(
                                     self.back_childs, idx, i, j
                                 )
                 else:
