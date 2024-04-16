@@ -1,3 +1,5 @@
+"""Neural Network components implementation"""
+
 from numpy.random import random as rand
 
 from .base import Module
@@ -24,22 +26,22 @@ class Linear(Module):
     def parameters(self) -> list:
         return [self.A, self.b]
 
+
 class Sequential(Module):
 
     def __init__(self, *layers) -> None:
         super().__init__()
         self.layers = layers
-    
+
     def forward(self, x: Tensor) -> Tensor:
         h = x
         for layer in self.layers:
             h = layer(h)
         return h
-    
+
     def parameters(self) -> list:
         res = []
         for layer in self.layers:
             if isinstance(layer, Module):
                 res.extend(layer.parameters())
         return res
-

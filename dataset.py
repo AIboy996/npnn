@@ -54,7 +54,7 @@ def load_mnist(
     """Load Fashion MNIST data from `dataset_path`"""
 
     download_minist(dataset_path)
-    load_file = "train" if kind == "val" else kind
+    load_file = "t10k" if kind == "test" else "train"
     labels_path = os.path.join(dataset_path, "%s-labels-idx1-ubyte.gz" % load_file)
     images_path = os.path.join(dataset_path, "%s-images-idx3-ubyte.gz" % load_file)
 
@@ -78,5 +78,5 @@ def load_mnist(
 
 
 if __name__ == "__main__":
-    images, labels = load_mnist("./data", "train")
+    images, labels = load_mnist("./data", "test")
     breakpoint()

@@ -1,4 +1,4 @@
-"""base template"""
+"""Base classes"""
 import numpy as np
 
 class Operation:
@@ -29,6 +29,9 @@ class Module:
     def parameters(self) -> list:
         """Return all parameters to be optimized."""
         raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f"{self.__class__}"
 
 class Optimizer:
 

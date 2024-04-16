@@ -1,4 +1,4 @@
-"""Neural Network Implementation"""
+"""Tensor operation implementation"""
 
 from functools import wraps
 
@@ -20,6 +20,10 @@ __all__ = [
     "ReLU",
 ]
 
+def one_hot(x, NUM_CLASS):
+    y = np.zeros((x.size, NUM_CLASS))
+    y[np.arange(x.size), x] = 1
+    return y
 
 def singleton(original_cls):
     """

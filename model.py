@@ -6,18 +6,22 @@ from nnn import Tensor
 import nnn.nn as nn
 import nnn.functional as F
 
-class NeuralNetwork(nn.Module):
-    def __init__(self):
+
+class FNN(nn.Module):
+    def __init__(
+        self, in_size, out_size, hidden_size: list[int] = [512, 256], activation=F.ReLU
+    ):
         super().__init__()
         self.flatten = F.Flatten()
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512),
-            F.ReLU(),
-            nn.Linear(512, 512),
-            F.ReLU(),
-            nn.Linear(512, 10),
-            F.LogSoftmax(),
-        )
+        hidden_layers = []
+        for m, n in zip(
+            (in_size, *hidden_size),
+            (*hidden_size, out_size),
+        ):
+            hidden_layers.append(nn.Linear(m, n))
+            hidden_layers.append(activation())
+
+        self.linear_relu_stack = nn.Sequential(*hidden_layers, F.LogSoftmax())
 
     def forward(self, x):
         x = self.flatten(x)
@@ -27,13 +31,16 @@ class NeuralNetwork(nn.Module):
     def parameters(self) -> list:
         return self.linear_relu_stack.parameters()
 
+
 def test_NeuralNetwork():
-    model = NeuralNetwork()
+    model = FNN(28*28, 10)
     x = Tensor(np.random.random((1, 28, 28)))
     logits = model(x)
     l = F.Norm()(logits)
     l.backward()
-    print(logits, l)
+    print(model)
+    print(l)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_NeuralNetwork()

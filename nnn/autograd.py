@@ -1,4 +1,8 @@
-"""numpy neural network"""
+"""
+Autograd algorithm implementation. 
+
+Calcute Tensor's grad by tracking `back_childs` and `back_f`(in fact these two generate a computional tree).
+"""
 
 import numpy as np
 
@@ -6,6 +10,7 @@ from .base import Operation
 
 
 class Tensor:
+    """Data Container designed for gradient descent based Machine Learning."""
 
     def __init__(self, arr: np.array, requires_grad: bool = False):
         """
