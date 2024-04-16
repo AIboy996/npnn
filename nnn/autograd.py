@@ -79,13 +79,11 @@ class Tensor:
                         child.grad += grad @ self.back_f.gradient(self.back_childs, idx)
                     # parameter is matrix
                     elif child.ndim == 2:
-                        for i in range(child.shape[0]):
-                            for j in range(child.shape[1]):
-                                # back_f is a function: f(X1,X2,X3,...) map X into R^m
-                                # we calcute detivates w.r.t. X[idx][i,j], which is a vector in R^m
-                                child.grad[i, j] += grad @ self.back_f.gradient(
-                                    self.back_childs, idx, i, j
-                                )
+                        child.grad += np.tensordot(
+                            grad,
+                            self.back_f.gradient(self.back_childs, idx),
+                            axes=(0, 0),
+                        )
                 else:
                     pass
             else:
@@ -114,7 +112,7 @@ class Tensor:
 if __name__ == "__main__":
     from nnn.functional import *
 
-    x = Tensor(np.random.random((3,3)), requires_grad=True)
+    x = Tensor(np.random.random((3, 3)), requires_grad=True)
     y = Norm()(Flatten()(x))
     y.backward()
     print(x.grad)

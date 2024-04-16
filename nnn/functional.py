@@ -20,10 +20,12 @@ __all__ = [
     "ReLU",
 ]
 
+
 def one_hot(x, NUM_CLASS):
     y = np.zeros((x.size, NUM_CLASS))
     y[np.arange(x.size), x] = 1
     return y
+
 
 def singleton(original_cls):
     """
@@ -55,7 +57,7 @@ class Add(Operation):
         res.back_childs = (x, y)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """
         1. `d(X+Y) / dX = \mathbb{I} \otimes \mathbb{I}` if X is matrix
         2. `d(x+y) / dx = \mathbb{I}` if x is vector
@@ -65,9 +67,7 @@ class Add(Operation):
         if x.ndim == 1:
             return np.eye(*x.shape)
         else:
-            res = np.zeros_like(x)
-            res[i, j] = 1
-            return res
+            raise NotImplementedError("No need.")
 
 
 @singleton
@@ -83,7 +83,7 @@ class Inner(Operation):
         res.back_childs = (x, y)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """
         if x is matrix
         d x@y / dx[i,j] = [0,...,y[j],... ,0], where y[j] is the ith component
@@ -93,19 +93,22 @@ class Inner(Operation):
         d x@y / dx = y.T
         """
         x, y = back_childs
+        x, y = x.data, y.data
         if idx == 0:
-            if x.data.ndim == 1:
-                return y.data.T
+            if x.ndim == 1:
+                return y.T
             else:
-                res = np.zeros((x.shape[0],))
-                res[i] = y.data[j]
+                m, n = x.shape
+                res = np.zeros((m, m, n))
+                res[np.arange(m), np.arange(m), :] = y
                 return res
         else:
-            if y.data.ndim == 1:
-                return x.data
+            if y.ndim == 1:
+                return x
             else:
-                res = np.zeros((x.shape[0],))
-                res[j] = x.data[i]
+                m, n = y.shape
+                res = np.zeros((n, m, n))
+                res[np.arange(n), :, np.arange(n)] = x
                 return res
 
 
@@ -119,14 +122,15 @@ class Flatten(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
         if x.ndim == 1:
             return np.eye(*x.shape)
         else:
             m, n = x.shape
-            res = np.zeros(m * n)
-            res[i * m + j] = 1
+            res = np.zeros((m * n, m, n))
+            for i in range(m * n):
+                res[i, i // m, i % n] = 1
             return res
 
 
@@ -140,7 +144,7 @@ class Sum(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """Easy"""
         return np.ones_like(back_childs[idx])
 
@@ -161,7 +165,7 @@ class Norm(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """
         `d norm2(x) / dx = x / norm2(x)`
         """
@@ -183,7 +187,7 @@ class NLL(Operation):
         res.back_childs = (x, y)
         return res
 
-    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """
         dl / dx = -y, dl / dy = -x
         """
@@ -203,7 +207,7 @@ class Log(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx: int, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """
         dy / dx = diag(1/x)
         """
@@ -228,10 +232,10 @@ class Softmax(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
         y = self.softmax(x.data)
-        vec = y.reshape((-1,1))
+        vec = y.reshape((-1, 1))
         # broadcast
         return np.diag(y) - vec @ vec.T
         # n = x.shape[0]
@@ -259,7 +263,7 @@ class LogSoftmax(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
         n = x.shape[0]
         y = Softmax.softmax(x.data).reshape((1, n))
@@ -284,7 +288,7 @@ class ReLU(Operation):
         res.back_childs = (x,)
         return res
 
-    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+    def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx].data
         grad = np.zeros_like(x)
         grad[x > 0] = 1
