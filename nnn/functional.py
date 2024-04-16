@@ -16,6 +16,7 @@ __all__ = [
     "NLL",
     "Log",  # activation functions
     "Softmax",
+    "LogSoftmax",
     "ReLU",
 ]
 
@@ -211,10 +212,45 @@ class Softmax(Operation):
     y = softmax(x) = x.exp() / x.exp().sum(), this is an approximation for `argamx`
     """
 
+    @staticmethod
+    def softmax(x: np.ndarray) -> np.ndarray:
+        e = np.exp(x - x.max())
+        return e / e.sum()
+
     def forward(self, x: Tensor) -> Tensor:
         # avoid overflow
-        e = np.exp(x.data - x.data.max())
-        res = Tensor(e / e.sum())
+        res = Tensor(Softmax.softmax(x.data))
+        res.back_f = self
+        res.back_childs = (x,)
+        return res
+
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+        x = back_childs[idx]
+        y = self.softmax(x.data)
+        vec = y.reshape((-1,1))
+        # broadcast
+        return np.diag(y) - vec @ vec.T
+        # n = x.shape[0]
+        # grad = np.zeros((n, n))
+        # for i in range(n):
+        #     for j in range(i, n):
+        #         grad[i, j] = y[i] * (1 - y[i]) if i == j else -y[i] * y[j]
+        #         grad[j, i] = grad[i, j]
+        # return grad
+
+
+@singleton
+class LogSoftmax(Operation):
+    """
+    y = log(softmax(x)), more numerical stable version.
+    """
+
+    def forward(self, x: Tensor) -> Tensor:
+        a = x.data
+        m = np.abs(a).max()
+        e = np.exp(a - m)
+        # avoid overflow
+        res = Tensor(a - m - np.log(e.sum()))
         res.back_f = self
         res.back_childs = (x,)
         return res
@@ -222,13 +258,14 @@ class Softmax(Operation):
     def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
         x = back_childs[idx]
         n = x.shape[0]
-        y = self.forward(x).data
-        grad = np.zeros((n, n))
-        for i in range(n):
-            for j in range(i, n):
-                grad[i, j] = y[i] * (1 - y[i]) if i == j else -y[i] * y[j]
-                grad[j, i] = grad[i, j]
-        return grad
+        y = Softmax.softmax(x.data).reshape((1, n))
+        # broadcast
+        return np.eye(n) - y
+        # grad = np.zeros((n,n))
+        # for i in range(n):
+        #     for j in range(n):
+        #         grad[i, j] = 1 - y[j] if i == j else -y[j]
+        # return grad
 
 
 @singleton

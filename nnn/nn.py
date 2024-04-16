@@ -42,3 +42,4 @@ class Sequential(Module):
             if isinstance(layer, Module):
                 res.extend(layer.parameters())
         return res
+

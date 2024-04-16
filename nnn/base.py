@@ -29,3 +29,16 @@ class Module:
     def parameters(self) -> list:
         """Return all parameters to be optimized."""
         raise NotImplementedError
+
+class Optimizer:
+
+    def __init__(self) -> None:
+        super().__init__()
+    
+    def step(self):
+        """Take a step on gradient direction."""
+        raise NotImplementedError
+
+    def zero_grad(self):
+        """Only should call this if you want to perform mini-batch gradient descent."""
+        raise NotImplementedError

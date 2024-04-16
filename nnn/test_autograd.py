@@ -97,6 +97,7 @@ class TestAutograd(unittest.TestCase):
         """
         for act_nnn, act_torch in [
             (Softmax(), torch.nn.Softmax(dim=0)),
+            (LogSoftmax(), torch.nn.LogSoftmax(dim=0)),
             (ReLU(), torch.relu),
         ]:
             # nnn api

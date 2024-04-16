@@ -16,8 +16,7 @@ class NeuralNetwork(nn.Module):
             nn.Linear(512, 512),
             F.ReLU(),
             nn.Linear(512, 10),
-            F.Softmax(),
-            # F.Log()
+            F.LogSoftmax(),
         )
 
     def forward(self, x):
@@ -32,7 +31,9 @@ def test_NeuralNetwork():
     model = NeuralNetwork()
     x = Tensor(np.random.random((1, 28, 28)))
     logits = model(x)
-    print(logits)
+    l = F.Norm()(logits)
+    l.backward()
+    print(logits, l)
 
 if __name__ == '__main__':
     test_NeuralNetwork()
