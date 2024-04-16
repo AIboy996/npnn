@@ -46,3 +46,4 @@ class Optimizer:
         """Only should call this if you want to perform mini-batch gradient descent."""
         for param in self.params:
             param.grad = np.zeros_like(param.data)
+            param.back_counter = 0

@@ -33,7 +33,7 @@ class SGD(Optimizer):
     def step(self):
         for param in self.params:
             x = param.data
-            g = param.grad
+            g = param.grad / param.back_counter
             if self.weight_decay != 0:
                 g = g + self.weight_decay * x
             if self.momentum != 0:
@@ -80,7 +80,7 @@ class Adam(Optimizer):
         for param in self.params:
             beta1, beta2 = self.betas
             x = param.data
-            g = param.grad
+            g = param.grad / param.back_counter
             if self.weight_decay != 0:
                 g = g + self.weight_decay * x
             if self.step_now > 0:

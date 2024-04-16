@@ -29,6 +29,7 @@ class Tensor:
             self.grad = np.zeros_like(arr)
         else:
             self.grad = None
+        self.back_counter = 0
 
     def backward(self):
         """
@@ -61,6 +62,7 @@ class Tensor:
                     assert child.ndim <= 2, "Parameters should have ndim <= 2"
                     # multivariable function, detivate of idx-th variable
                     child.grad += self.back_f.gradient(self.back_childs, idx)
+                    child.back_counter += 1
                 else:
                     pass
             else:
@@ -77,6 +79,7 @@ class Tensor:
                     # parameter is vector
                     if child.ndim == 1:
                         child.grad += grad @ self.back_f.gradient(self.back_childs, idx)
+                        child.back_counter += 1
                     # parameter is matrix
                     elif child.ndim == 2:
                         child.grad += np.tensordot(
@@ -84,6 +87,7 @@ class Tensor:
                             self.back_f.gradient(self.back_childs, idx),
                             axes=(0, 0),
                         )
+                        child.back_counter += 1
                 else:
                     pass
             else:
