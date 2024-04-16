@@ -6,8 +6,8 @@ import unittest
 import numpy as np
 from numpy.random import random
 
-from autograd import Tensor
-from functional import *
+from .autograd import Tensor
+from .functional import *
 
 import torch  # only for test, ensure computation of nnn is right
 
@@ -17,6 +17,27 @@ rand = lambda size: random(size=size) - 0.5
 
 
 class TestAutograd(unittest.TestCase):
+
+    def test_Flatten(self):
+        """
+        y = sum(x.flatten())
+        """
+
+        # nnn api
+        x = Tensor(np.random.random((3,3)), requires_grad=True)
+        y = Sum()(Flatten()(x))
+        y.backward()
+        grad_nnn = x.grad
+
+        # torch api
+        x = torch.from_numpy(x.data)
+        x.requires_grad = True
+        y = torch.sum(x.flatten())
+        y.backward()
+        grad_torh = x.grad.numpy()
+
+        # check float almost equal
+        self.assertTrue(np.allclose(grad_nnn, grad_torh))
 
     def test_Linear(self):
         """

@@ -4,12 +4,13 @@ from functools import wraps
 
 import numpy as np
 
-from autograd import Tensor
-from base import Operation
+from .autograd import Tensor
+from .base import Operation
 
 __all__ = [
     "Add",  # basic oprations
     "Inner",
+    "Flatten",
     "Sum",  # loss functions
     "Norm",
     "NLL",
@@ -38,6 +39,7 @@ def singleton(original_cls):
     original_cls.__new__ = __new__
     return original_cls
 
+
 @singleton
 class Add(Operation):
     """z = x + y"""
@@ -55,21 +57,19 @@ class Add(Operation):
         """
         x = back_childs[idx]
         assert x.ndim <= 2
-        if x.ndim == 2:
+        if x.ndim == 1:
+            return np.eye(*x.shape)
+        else:
             res = np.zeros_like(x)
             res[i, j] = 1
             return res
-        else:
-            return np.eye(*x.shape)
+
 
 @singleton
 class Inner(Operation):
     """
     z = x @ y where z is vector or scalar
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
         res = Tensor(x.data @ y.data)
@@ -103,12 +103,31 @@ class Inner(Operation):
                 res[j] = x.data[i]
                 return res
 
+
+@singleton
+class Flatten(Operation):
+    """y = x.flatten()"""
+
+    def forward(self, x: Tensor) -> Tensor:
+        res = Tensor(x.data.flatten())
+        res.back_f = self
+        res.back_childs = (x,)
+        return res
+
+    def gradient(self, back_childs: tuple, idx=0, i=None, j=None) -> np.ndarray:
+        x = back_childs[idx]
+        if x.ndim == 1:
+            return np.eye(*x.shape)
+        else:
+            m, n = x.shape
+            res = np.zeros(m * n)
+            res[i * m + j] = 1
+            return res
+
+
 @singleton
 class Sum(Operation):
     """y = sum(X)"""
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
         res = Tensor(x.data.sum().reshape((1,)))
@@ -120,14 +139,12 @@ class Sum(Operation):
         """Easy"""
         return np.ones_like(back_childs[idx])
 
+
 @singleton
 class Norm(Operation):
     """
     y = sqrt(x.T @ x)
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
         m = np.abs(x.data).max()
@@ -147,15 +164,13 @@ class Norm(Operation):
         y = self.forward(x)
         return x.data / y.data
 
+
 @singleton
 class NLL(Operation):
     """
     Negative Log Likelihod
     l = -sum(x @ y)
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
         res = Tensor(-(x.data @ y.data).sum().reshape((1,)))
@@ -169,14 +184,12 @@ class NLL(Operation):
         """
         return -back_childs[1 - idx]
 
+
 @singleton
 class Log(Operation):
     """
     y = x.log()
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
         assert (x.data > 0).all()
@@ -191,14 +204,12 @@ class Log(Operation):
         """
         return np.diag(1 / back_childs[idx].data)
 
+
 @singleton
 class Softmax(Operation):
     """
     y = softmax(x) = x.exp() / x.exp().sum(), this is an approximation for `argamx`
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
         # avoid overflow
@@ -219,14 +230,12 @@ class Softmax(Operation):
                 grad[j, i] = grad[i, j]
         return grad
 
+
 @singleton
 class ReLU(Operation):
     """
     y = relu(x) = max(0,x)
     """
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, x: Tensor) -> Tensor:
         res = Tensor(np.maximum(x.data, 0))

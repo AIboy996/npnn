@@ -2,13 +2,14 @@
 
 import numpy as np
 
-from nnn import nn
-from nnn import functional as F
+from nnn import Tensor
+import nnn.nn as nn
+import nnn.functional as F
 
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.flatten = nn.Flatten()
+        self.flatten = F.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(28*28, 512),
             F.ReLU(),
@@ -16,7 +17,7 @@ class NeuralNetwork(nn.Module):
             F.ReLU(),
             nn.Linear(512, 10),
             F.Softmax(),
-            F.Log()
+            # F.Log()
         )
 
     def forward(self, x):
@@ -24,7 +25,14 @@ class NeuralNetwork(nn.Module):
         logits = self.linear_relu_stack(x)
         return logits
 
+    def parameters(self) -> list:
+        return self.linear_relu_stack.parameters()
+
 def test_NeuralNetwork():
     model = NeuralNetwork()
-    x = np.rand(1, 28, 28)
+    x = Tensor(np.random.random((1, 28, 28)))
     logits = model(x)
+    print(logits)
+
+if __name__ == '__main__':
+    test_NeuralNetwork()

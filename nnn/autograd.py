@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from base import Operation
+from .base import Operation
 
 
 class Tensor:
@@ -106,5 +106,7 @@ class Tensor:
 if __name__ == "__main__":
     from nnn.functional import *
 
-    x = Tensor(np.random.random((3,)), requires_grad=True)
-    print(x, -x, sep="\n")
+    x = Tensor(np.random.random((3,3)), requires_grad=True)
+    y = Norm()(Flatten()(x))
+    y.backward()
+    print(x.grad)

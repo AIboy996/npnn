@@ -26,6 +26,6 @@ class Module:
         """Forward call"""
         return self.forward(*x)
     
-    def parameters(self) -> tuple:
+    def parameters(self) -> list:
         """Return all parameters to be optimized."""
         raise NotImplementedError

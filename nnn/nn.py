@@ -1,8 +1,8 @@
 from numpy.random import random as rand
 
-from base import Module
-from functional import Inner, Add
-from autograd import Tensor
+from .base import Module
+from .functional import Inner, Add
+from .autograd import Tensor
 
 
 class Linear(Module):
@@ -16,10 +16,29 @@ class Linear(Module):
         if self.bias:
             self.b = Tensor(rand((out_size,)), requires_grad=True)
 
-    def forward(self, x: Tensor):
+    def forward(self, x: Tensor) -> Tensor:
         inner = Inner()
         add = Add()
         return add(inner(self.A, x), self.b)
 
-    def parameters(self) -> tuple:
-        return (self.A, self.b)
+    def parameters(self) -> list:
+        return [self.A, self.b]
+
+class Sequential(Module):
+
+    def __init__(self, *layers) -> None:
+        super().__init__()
+        self.layers = layers
+    
+    def forward(self, x: Tensor) -> Tensor:
+        h = x
+        for layer in self.layers:
+            h = layer(h)
+        return h
+    
+    def parameters(self) -> list:
+        res = []
+        for layer in self.layers:
+            if isinstance(layer, Module):
+                res.extend(layer.parameters())
+        return res
