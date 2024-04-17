@@ -7,8 +7,9 @@ import os
 import gzip
 from typing import Literal
 from urllib.request import urlretrieve
-import numpy as np
 from hashlib import md5
+
+from nnn import np
 
 
 def download_minist(dataset_path="./data"):

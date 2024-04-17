@@ -1,8 +1,7 @@
 """Provide gradietn descent optimizer"""
 
-import numpy as np
 
-from .base import Optimizer
+from .base import Optimizer, np
 from .autograd import Tensor
 
 

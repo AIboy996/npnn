@@ -2,10 +2,8 @@
 
 from functools import wraps
 
-import numpy as np
-
 from .autograd import Tensor
-from .base import Operation
+from .base import Operation, np
 
 __all__ = [
     "Add",  # basic oprations
@@ -191,7 +189,7 @@ class NLL(Operation):
         """
         dl / dx = -y, dl / dy = -x
         """
-        return -back_childs[1 - idx]
+        return -back_childs[1 - idx].data
 
 
 @singleton

@@ -1,10 +1,10 @@
 """Neural Network components implementation"""
 
-from numpy.random import random as rand
-
-from .base import Module
+from .base import Module, np
 from .functional import Inner, Add
 from .autograd import Tensor
+
+rand = np.random.random
 
 
 class Linear(Module):

@@ -1,7 +1,5 @@
 """train model"""
 
-import numpy as np
-
 import nnn.functional as F
 from nnn.optim import Adam
 from nnn import Tensor
@@ -16,7 +14,7 @@ NUM_CLASS = 10
 model = FNN(
     in_size=IMAGE_SIZE,
     out_size=NUM_CLASS,
-    hidden_size=[512, 256],
+    hidden_size=[256,],
     activation=F.ReLU,
 )
 optimizer = Adam(model.parameters(), lr=0.01)
@@ -31,7 +29,7 @@ criterion = F.NLL()
 
 for epoch in range(3):
     dataset_size = len(train_images)
-    mini_batch_size = 100
+    mini_batch_size = 1
     for b in range(dataset_size // mini_batch_size):
         mean_loss = 0
         for x, y in zip(
@@ -46,6 +44,7 @@ for epoch in range(3):
             mean_loss += loss.data[0]
             optimizer.step()
         mean_loss /= mini_batch_size
-        print(f"\nmean_loss {mean_loss : .4f}")
         accuracy = test_model(model)
-        print(f"accuracy {accuracy: .4f}")
+        print(f"mean_loss={mean_loss : .4f}, accuracy={accuracy: .4f}")
+        break
+    break

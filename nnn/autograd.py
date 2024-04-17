@@ -4,9 +4,7 @@ Autograd algorithm implementation.
 Calcute Tensor's grad by tracking `back_childs` and `back_f`(in fact these two generate a computional tree).
 """
 
-import numpy as np
-
-from .base import Operation
+from .base import Operation, np
 
 
 class Tensor:

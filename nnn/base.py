@@ -1,5 +1,11 @@
 """Base classes"""
-import numpy as np
+
+try:
+    import cupy as np
+except ImportError:
+    print("cupy acceleration is not available.")
+    import numpy as np
+
 
 class Operation:
 
@@ -17,6 +23,7 @@ class Operation:
         """Gradietn function"""
         raise NotImplementedError
 
+
 class Module:
 
     def __init__(self) -> None:
@@ -25,7 +32,7 @@ class Module:
     def __call__(self, *x):
         """Forward call"""
         return self.forward(*x)
-    
+
     def parameters(self) -> list:
         """Return all parameters to be optimized."""
         raise NotImplementedError
@@ -33,11 +40,12 @@ class Module:
     def __repr__(self) -> str:
         return f"{self.__class__}"
 
+
 class Optimizer:
 
     def __init__(self) -> None:
         super().__init__()
-    
+
     def step(self):
         """Take a step on gradient direction."""
         raise NotImplementedError

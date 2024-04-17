@@ -1,8 +1,6 @@
 """model"""
 
-import numpy as np
-
-from nnn import Tensor
+from nnn import Tensor, np
 import nnn.nn as nn
 import nnn.functional as F
 

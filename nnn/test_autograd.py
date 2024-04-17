@@ -3,9 +3,8 @@ In this file we test nnn api, compared with torch api ^&^.
 """
 
 import unittest
-import numpy as np
-from numpy.random import random
 
+from .base import np
 from .autograd import Tensor
 from .functional import *
 
@@ -13,7 +12,7 @@ import torch  # only for test, ensure computation of nnn is right
 
 
 TEST_SIZE = 5
-rand = lambda size: random(size=size) - 0.5
+rand = lambda size: np.random.random(size=size) - 0.5
 
 
 class TestAutograd(unittest.TestCase):
@@ -24,7 +23,7 @@ class TestAutograd(unittest.TestCase):
         """
 
         # nnn api
-        x = Tensor(np.random.random((3,3)), requires_grad=True)
+        x = Tensor(rand((3, 3)), requires_grad=True)
         y = Sum()(Flatten()(x))
         y.backward()
         grad_nnn = x.grad
