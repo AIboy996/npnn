@@ -1,0 +1,68 @@
+Metadata-Version: 2.1
+Name: npnn
+Version: 0.0.1
+Summary: NumPy Neural Network
+Author-email: Yang Zhang <mail@yangzhang.site>
+License: MIT License
+        
+        Copyright (c) 2024 Yang Zhang
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        
+Project-URL: Homepage, https://github.com/AIboy996/npnn
+Keywords: numpy,neural network,machine learning,autograd
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3.10
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Provides-Extra: cuda
+Requires-Dist: cupy; extra == "cuda"
+
+# NPNN
+> NumPy Neural Network
+
+## What's `npnn`?
+> `npnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
+
+
+## Work with `npnn`!
+> construct a image classification neural network with npnn
+
+BTW, this is a course assignment of *DATA620004, School of Data Science, Fudan University*.
+
+### Task
+Construct and Train a neural network on [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist) to do image classification.
+
+- Implement gradient backpropagation algorithm by hand,you can use `numpy` but **DO NOT** use `pytorch` or `tensorflow` to do autograd.
+
+- Submit source code including at least four parts: `model definition`, `training`, `parameters searching` and `testing`.
+
+### Implementation
+
+- `dataset.py`: provide Fashion MNIST dataset
+- `model.py`: model definition
+- `train.py`: model training
+- `search.py`: parameters searching
+- `test.py`: model testing
+- `utils.py`: some misc function, such as `save_mode`

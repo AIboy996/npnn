@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 authors = [
   { name="Yang Zhang", email="mail@yangzhang.site" },
 ]
-description = "Numpy Neural Network"
+description = "NumPy Neural Network"
 readme = "readme.md"
 license = {file = "LICENSE"}
 keywords = ["numpy", "neural network", "machine learning", "autograd"]

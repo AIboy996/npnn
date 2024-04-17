@@ -1,5 +1,11 @@
-# NPNN
+# [npnn](https://pypi.org/project/npnn/0.0.1/)
 > NumPy Neural Network
+
+[![PyPI - Version](https://img.shields.io/pypi/v/npnn)](https://pypi.org/project/npnn/0.0.1/)
+![PyPI - Implementation](https://img.shields.io/pypi/implementation/npnn)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/npnn)
+<!-- ![PyPI - Downloads](https://img.shields.io/pypi/dm/npnn) -->
+
 
 ## What's `npnn`?
 > `npnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
