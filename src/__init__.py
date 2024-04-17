@@ -1,6 +1,6 @@
 """
-# NNN
-> Numpy Neural Network
+# NPNN
+> NumPy Neural Network
 
 """
 

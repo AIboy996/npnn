@@ -1,5 +1,5 @@
 """
-In this file we test nnn api, compared with torch api ^&^.
+In this file we test npnn api, compared with torch api ^&^.
 """
 
 import unittest
@@ -8,7 +8,7 @@ from .base import np
 from .autograd import Tensor
 from .functional import *
 
-import torch  # only for test, ensure computation of nnn is right
+import torch  # only for test, ensure computation of npnn is right
 
 
 TEST_SIZE = 5
@@ -22,7 +22,7 @@ class TestAutograd(unittest.TestCase):
         y = sum(x.flatten())
         """
 
-        # nnn api
+        # npnn api
         x = Tensor(rand((3, 3)), requires_grad=True)
         y = Sum()(Flatten()(x))
         y.backward()
@@ -51,7 +51,7 @@ class TestAutograd(unittest.TestCase):
         we use `sum` to test since its derivative is super simple.
         """
 
-        # nnn api
+        # npnn api
         A = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
         B = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
         c = Tensor(rand((TEST_SIZE,)), requires_grad=True)
@@ -108,7 +108,7 @@ class TestAutograd(unittest.TestCase):
             (LogSoftmax(), torch.nn.LogSoftmax(dim=0)),
             (ReLU(), torch.relu),
         ]:
-            # nnn api
+            # npnn api
             A = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
             b = Tensor(rand((TEST_SIZE,)), requires_grad=True)
             x = Tensor(rand((TEST_SIZE,)))
@@ -148,7 +148,7 @@ class TestAutograd(unittest.TestCase):
 
         by calcuting dy/dA and dy/db.
         """
-        # nnn api
+        # npnn api
         A = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
         b = Tensor(rand((TEST_SIZE,)), requires_grad=True)
         z = -Tensor(rand((TEST_SIZE,)))  # add netgative z
@@ -205,7 +205,7 @@ class TestAutograd(unittest.TestCase):
 
         """
 
-        # nnn api
+        # npnn api
         A = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
         B = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)
         C = Tensor(rand((TEST_SIZE, TEST_SIZE)), requires_grad=True)

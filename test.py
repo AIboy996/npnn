@@ -1,7 +1,7 @@
 """test model"""
 
 from dataset import load_mnist
-from nnn import Tensor
+from npnn import Tensor
 
 
 def test_model(model, dataset="val"):

@@ -1,8 +1,8 @@
 """model"""
 
-from nnn import Tensor, np
-import nnn.nn as nn
-import nnn.functional as F
+from npnn import Tensor, np
+import npnn.nn as nn
+import npnn.functional as F
 
 
 class FNN(nn.Module):

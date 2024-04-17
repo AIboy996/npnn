@@ -4,9 +4,9 @@ import logging
 import os
 import time
 
-import nnn.functional as F
-from nnn.optim import Adam
-from nnn import Tensor
+import npnn.functional as F
+from npnn.optim import Adam
+from npnn import Tensor
 
 from dataset import load_mnist
 from model import FNN

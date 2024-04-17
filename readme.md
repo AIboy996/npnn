@@ -1,12 +1,12 @@
-# NNN
-> Numpy Neural Network
+# NPNN
+> NumPy Neural Network
 
-## What's `nnn`?
-> `nnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
+## What's `npnn`?
+> `npnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
 
 
-## Work with `nnn`!
-> construct a image classification neural network with nnn
+## Work with `npnn`!
+> construct a image classification neural network with npnn
 
 BTW, this is a course assignment of *DATA620004, School of Data Science, Fudan University*.
 
