@@ -1,6 +1,10 @@
 # NNN
 > Numpy Neural Network
 
+## nnn
+Check [NNN README](./nnn/readme.md) for documentation.
+
+
 ## 任务描述
 手工搭建三层神经网络分类器，在数据集[Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist)上进行训练以实现图像分类。
 

@@ -1,7 +1,7 @@
 # python cache file
 __pycache__
 
-# tensorboard log file
+# train log file
 logs
 
 # data file
@@ -9,3 +9,6 @@ data
 
 # viztracer log file
 result.json
+
+# saved model
+checkpoints

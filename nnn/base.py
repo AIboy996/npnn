@@ -1,9 +1,12 @@
 """Base classes"""
 
+import logging
+logger = logging.getLogger(__name__)
+
 try:
     import cupy as np
 except ImportError:
-    print("cupy acceleration is not available.")
+    logger.warning("cupy acceleration is not available.")
     import numpy as np
 
 
