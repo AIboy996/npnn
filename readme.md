@@ -1,16 +1,27 @@
 # NNN
 > Numpy Neural Network
 
-## nnn
-Check [NNN README](./nnn/readme.md) for documentation.
+## What's `nnn`?
+> `nnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
 
 
-## 任务描述
-手工搭建三层神经网络分类器，在数据集[Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist)上进行训练以实现图像分类。
+## Work with `nnn`!
+> construct a image classification neural network with nnn
 
-## 基本要求
-（1） 本次作业要求自主实现反向传播，不允许使用pytorch，tensorflow等现成的支持自动微分的深度学习框架，可以使用numpy；
+BTW, this is a course assignment of *DATA620004, School of Data Science, Fudan University*.
 
-（2） 最终提交的代码中应至少包含模型、训练、测试和参数查找四个部分，鼓励进行模块化设计；
+### Task
+Construct and Train a neural network on [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist) to do image classification.
 
-（3） 其中模型部分应允许自定义隐藏层大小、激活函数类型，支持通过反向传播计算给定损失的梯度；训练部分应实现SGD优化器、学习率下降、交叉熵损失和L2正则化，并能根据验证集指标自动保存最优的模型权重；参数查找环节要求调节学习率、隐藏层大小、正则化强度等超参数，观察并记录模型在不同超参数下的性能；测试部分需支持导入训练好的模型，输出在测试集上的分类准确率（Accuracy）。
+- Implement gradient backpropagation algorithm by hand,you can use `numpy` but **DO NOT** use `pytorch` or `tensorflow` to do autograd.
+
+- Submit source code including at least four parts: `model definition`, `training`, `parameters searching` and `testing`.
+
+### Implementation
+
+- `dataset.py`: provide Fashion MNIST dataset
+- `model.py`: model definition
+- `train.py`: model training
+- `search.py`: parameters searching
+- `test.py`: model testing
+- `utils.py`: some misc function, such as `save_mode`

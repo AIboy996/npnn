@@ -1,3 +1,0 @@
-# NNN
-> Numpy Neural Network
-

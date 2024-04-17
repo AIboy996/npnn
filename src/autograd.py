@@ -112,7 +112,7 @@ class Tensor:
 
 
 if __name__ == "__main__":
-    from nnn.functional import *
+    from src.functional import *
 
     x = Tensor(np.random.random((3, 3)), requires_grad=True)
     y = Norm()(Flatten()(x))
