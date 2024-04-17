@@ -29,7 +29,10 @@ class TestAutograd(unittest.TestCase):
         grad_nnn = x.grad
 
         # torch api
-        x = torch.from_numpy(x.data)
+        if np.__name__ == "cupy":
+            x = torch.from_numpy(x.data.get())
+        elif np.__name__ == "numpy":
+            x = torch.from_numpy(x.data)
         x.requires_grad = True
         y = torch.sum(x.flatten())
         y.backward()
@@ -68,13 +71,19 @@ class TestAutograd(unittest.TestCase):
         c_grad_nnn = c.grad
 
         # torch api
-        A = torch.from_numpy(A.data)
+        if np.__name__ == "cupy":
+            A = torch.from_numpy(A.data.get())
+            B = torch.from_numpy(B.data.get())
+            c = torch.from_numpy(c.data.get())
+            x = torch.from_numpy(x.data.get())
+        elif np.__name__ == "numpy":
+            A = torch.from_numpy(A.data)
+            B = torch.from_numpy(B.data)
+            c = torch.from_numpy(c.data)
+            x = torch.from_numpy(x.data)
         A.requires_grad = True
-        B = torch.from_numpy(B.data)
         B.requires_grad = True
-        c = torch.from_numpy(c.data)
         c.requires_grad = True
-        x = torch.from_numpy(x.data)
         y = ((A @ x) @ B + c).sum()
         y.backward()
         A_grad_torch = A.grad.numpy()
@@ -113,11 +122,16 @@ class TestAutograd(unittest.TestCase):
             b_grad_nnn = b.grad
 
             # torch api
-            A = torch.from_numpy(A.data)
+            if np.__name__ == "cupy":
+                A = torch.from_numpy(A.data.get())
+                b = torch.from_numpy(b.data.get())
+                x = torch.from_numpy(x.data.get())
+            elif np.__name__ == "numpy":
+                A = torch.from_numpy(A.data)
+                b = torch.from_numpy(b.data)
+                x = torch.from_numpy(x.data)
             A.requires_grad = True
-            b = torch.from_numpy(b.data)
             b.requires_grad = True
-            x = torch.from_numpy(x.data)
             y = act_torch(A @ x + b).sum()
             y.backward()
             A_grad_torch = A.grad.numpy()
@@ -156,12 +170,18 @@ class TestAutograd(unittest.TestCase):
         b_grad_nnn = b.grad
 
         # torch api
-        A = torch.from_numpy(A.data)
+        if np.__name__ == "cupy":
+            A = torch.from_numpy(A.data.get())
+            b = torch.from_numpy(b.data.get())
+            z = torch.from_numpy(z.data.get())
+            x = torch.from_numpy(x.data.get())
+        elif np.__name__ == "numpy":
+            A = torch.from_numpy(A.data)
+            b = torch.from_numpy(b.data)
+            z = torch.from_numpy(z.data)
+            x = torch.from_numpy(x.data)
         A.requires_grad = True
-        b = torch.from_numpy(b.data)
         b.requires_grad = True
-        z = torch.from_numpy(z.data)
-        x = torch.from_numpy(x.data)
         y = torch.norm(A @ x + b + z, p=2)
         y.backward()
         A_grad_torch = A.grad.numpy()
@@ -206,20 +226,30 @@ class TestAutograd(unittest.TestCase):
         nnn_grad = [A.grad, B.grad, C.grad, a.grad, b.grad, c.grad]
 
         # torch api
-        A = torch.from_numpy(A.data)
-        B = torch.from_numpy(B.data)
-        C = torch.from_numpy(C.data)
-        a = torch.from_numpy(a.data)
-        b = torch.from_numpy(b.data)
-        c = torch.from_numpy(c.data)
+        if np.__name__ == "cupy":
+            A = torch.from_numpy(A.data.get())
+            B = torch.from_numpy(B.data.get())
+            C = torch.from_numpy(C.data.get())
+            a = torch.from_numpy(a.data.get())
+            b = torch.from_numpy(b.data.get())
+            c = torch.from_numpy(c.data.get())
+            x = torch.from_numpy(x.data.get())
+            y = torch.from_numpy(y.data.get())
+        elif np.__name__ == "numpy":
+            A = torch.from_numpy(A.data)
+            B = torch.from_numpy(B.data)
+            C = torch.from_numpy(C.data)
+            a = torch.from_numpy(a.data)
+            b = torch.from_numpy(b.data)
+            c = torch.from_numpy(c.data)
+            x = torch.from_numpy(x.data)
+            y = torch.from_numpy(y.data)
         A.requires_grad = True
         B.requires_grad = True
         C.requires_grad = True
         a.requires_grad = True
         b.requires_grad = True
         c.requires_grad = True
-        x = torch.from_numpy(x.data)
-        y = torch.from_numpy(y.data)
         h1 = torch.relu(A @ x + a)
         h2 = torch.relu(B @ h1 + b)
         y_hat = torch.relu(C @ h2 + c)

@@ -1,6 +1,5 @@
 """Provide gradietn descent optimizer"""
 
-
 from .base import Optimizer, np
 from .autograd import Tensor
 
@@ -101,11 +100,10 @@ class Adam(Optimizer):
 def test_Regression(sgd=False, iterations=10_000):
     """
     Test on Linear Regression problem, compared with scipy.optimize.lsq_linear
-    
+
     find b to minimize `norm(y - y_hat)` where `y_hat = X @ b`
-    
+
     """
-    import numpy as np
     import scipy
     from .functional import Inner, Norm, Add
 
@@ -119,16 +117,20 @@ def test_Regression(sgd=False, iterations=10_000):
     beta = Tensor(rand(SIZE), requires_grad=True)
     y = Tensor(4 * (rand(SIZE) - 0.5))
     if sgd:
-        optmizer = SGD(
+        optimizer = SGD(
             params=[beta], momentum=0.1, dampening=0.5, lr=0.001, weight_decay=0.01
         )
     else:
-        optmizer = Adam(params=[beta], lr=0.001, weight_decay=0.01)
+        optimizer = Adam(params=[beta], lr=0.01, weight_decay=0.01)
     for _ in range(iterations):
         loss = norm(add(inner(X, beta), -y))
         loss.backward()
-        optmizer.step()
-    res = scipy.optimize.lsq_linear(X, y)
+        optimizer.step()
+        optimizer.zero_grad()
+    if np.__name__ == "cupy":
+        res = scipy.optimize.lsq_linear(X.data.get(), y.data.get())
+    elif np.__name__ == "numpy":
+        res = scipy.optimize.lsq_linear(X.data, y.data)
     print(res.x, res.cost, res.status)
     print(beta.data, loss.data[0])
 
