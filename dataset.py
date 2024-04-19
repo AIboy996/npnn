@@ -76,6 +76,8 @@ def load_mnist(
         return images[train_len:], labels[train_len:]
     elif kind == "test":
         return images, labels
+    else:
+        raise ValueError("Invalid dataset name.")
 
 
 if __name__ == "__main__":

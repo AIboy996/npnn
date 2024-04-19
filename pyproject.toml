@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "npnn"
-version = "0.0.1"
+version = "0.0.2"
 dependencies = [
   "numpy"
 ]
@@ -25,7 +25,8 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-cuda = ["cupy"]
+cuda11x = ["cupy-cuda11x"]
+cuda12x = ["cupy-cuda12x"]
 
 [project.urls]
 Homepage = "https://github.com/AIboy996/npnn"

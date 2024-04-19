@@ -7,12 +7,32 @@
 <!-- ![PyPI - Downloads](https://img.shields.io/pypi/dm/npnn) -->
 
 
-## What's `npnn`?
-> `npnn` is a a torch-like Python module for **gradient descent based machine learning** implemented with NumPy. 
+## What's npnn?
+> `npnn` is a a **torch-like** Python module for **gradient descent based machine learning** implemented with `numpy`. 
+
+### Dependency
+Basically `npnn` only depends on `numpy`(the latest version 1.26.4 is verified).
+
+If you have CUDA devices available, then you can easily get a acceleration by installing suitable version of `cupy`.  In this case `npnn` will use `cupy` api rather than `numpy` api.
+
+For example, my PC have CUDA v12.x (x86_64), so I use command:
+```bash
+pip install cupy-cuda12x
+pip install npnn
+```
+or in short:
+```bash
+pip install npnn[cuda12x]
+```
+check [cupy documentation](https://docs.cupy.dev/en/stable/install.html#installing-cupy) for more information.
 
 
-## Work with `npnn`!
-> construct a image classification neural network with npnn
+### API references
+
+See [npnn WIKI](https://github.com/AIboy996/npnn/wiki).
+
+## Work with npnn!
+> Here we will construct a image classification neural network with npnn.
 
 BTW, this is a course assignment of *DATA620004, School of Data Science, Fudan University*.
 
