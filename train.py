@@ -3,6 +3,8 @@
 import logging
 import os
 import time
+import pickle
+from typing import Literal
 
 import npnn.functional as F
 from npnn.optim import Adam
@@ -11,66 +13,112 @@ from npnn import Tensor
 from dataset import load_mnist
 from model import FNN
 from test import test_model
-from utils import save_model
+from utils import save_model, loads
 
-logger = logging.getLogger(__name__)
-if not os.path.exists("./logs"):
-    os.mkdir("./logs")
-if not os.path.exists("./checkpoints"):
-    os.mkdir("./checkpoints")
-date = time.strftime(r"%Y_%m%d")
-hashcode = f"{date}({int(time.time())})"
-logging.basicConfig(
-    filename=f"./logs/{hashcode}.log",
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)-8s %(message)s",
-    datefmt="%Y-%m-%d %H:%M",
-)
 
 IMAGE_SIZE = 28 * 28
 NUM_CLASS = 10
-TOTAL_EPOCH = 5
+TOTAL_EPOCH = 2
 MINI_BATCHSIZE = 5
 
-model = FNN(
-    in_size=IMAGE_SIZE,
-    out_size=NUM_CLASS,
-    hidden_size=[
-        256,
-    ],
-    activation=F.ReLU,
-)
-optimizer = Adam(model.parameters(), lr=0.01)
 
-train_images, train_labels = load_mnist("./data", "train")
-# trun into one hot
-train_labels_onehot = F.one_hot(train_labels, NUM_CLASS)
+class Trainer:
+    def __init__(
+        self,
+        hidden_size: list[int] = [256, 128, 64],
+        activation=F.ReLU,
+        regularization: Literal[None, "l1", "l2"] = None,
+        regular_strength: float = 0.01,
+    ) -> None:
+        self.model = FNN(
+            in_size=IMAGE_SIZE,
+            out_size=NUM_CLASS,
+            hidden_size=hidden_size,
+            activation=activation,
+        )
+        self.optimizer = Adam(
+            self.model.parameters(),
+            lr=0.01,
+            regularization=regularization,
+            regular_strength=regular_strength,
+        )
+        train_images, train_labels = load_mnist("./data", "train")
+        self.images = train_images
+        # trun into one hot
+        self.labels = F.one_hot(train_labels, NUM_CLASS)
+        # model's last layer is LogSoftmax, so we use NLL Loss function here
+        # this is equivalent to CrossEntropy Loss
+        self.criterion = F.NLL()
+        date = time.strftime(r"%Y_%m%d")
+        self.train_hashcode = f"{date}({int(time.time())})"
+        self.setup_logger()
 
-# model's last layer is LogSoftmax, so we use NLL Loss function here
-# this is equivalent to CrossEntropy Loss
-criterion = F.NLL()
+    def setup_logger(self):
+        self.logger = logging.getLogger(__name__)
+        if not os.path.exists("./logs"):
+            os.mkdir("./logs")
+        if not os.path.exists("./checkpoints"):
+            os.mkdir("./checkpoints")
 
-best = 0
-for epoch in range(TOTAL_EPOCH):
-    dataset_size = len(train_images)
-    for b in range(dataset_size // MINI_BATCHSIZE)[:50]:
-        mean_loss = 0
-        optimizer.zero_grad()
-        for x, y in zip(
-            train_images[MINI_BATCHSIZE * b : MINI_BATCHSIZE * (b + 1),],
-            train_labels_onehot[MINI_BATCHSIZE * b : MINI_BATCHSIZE * (b + 1),],
-        ):
-            y_hat = model(Tensor(x))
-            y = Tensor(y)
-            loss = criterion(y_hat, y)
-            loss.backward()
-            mean_loss += loss.data[0]
-        # take one setp on gradient direction on each mini-batch data
-        optimizer.step()
-        mean_loss /= MINI_BATCHSIZE
-        accuracy = test_model(model, dataset="val")
-        if accuracy > best:
-            best = accuracy
-            file_name = save_model(model, f"./checkpoints/{hashcode}", "best_model")
-            logger.info(f"find better model, saved to {file_name}.")
-        logger.info(f"train loss={mean_loss : .4f}, valid accuracy={accuracy: .4f}")
+        logging.basicConfig(
+            filename=f"./logs/{self.train_hashcode}.log",
+            level=logging.INFO,
+            format="%(asctime)s %(levelname)-8s %(message)s",
+            datefmt="%Y-%m-%d %H:%M",
+        )
+
+    def train(self):
+        self.best_metric = 0
+        self.best_model_path = ""
+        for epoch in range(TOTAL_EPOCH):
+            self.train_epoch(epoch)
+        self.logger.info(f"training done, best metric = {self.best_metric}")
+
+    def test(self):
+        best_model = pickle.loads(loads(self.best_model_path))
+        metric = test_model(best_model, dataset="test")
+        self.logger.info(f"test done, metric = {metric}")
+
+    def train_epoch(self, epoch):
+        dataset_size = len(self.images)
+        for batch in range(dataset_size // MINI_BATCHSIZE)[:1000]:
+            mean_loss = 0
+            self.optimizer.zero_grad()
+            for x, y in zip(
+                self.images[MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1),],
+                self.labels[MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1),],
+            ):
+                y_hat = self.model(Tensor(x))
+                y = Tensor(y)
+                loss = self.criterion(y_hat, y)
+                loss.backward()
+                mean_loss += loss.data[0]
+            # take one setp on gradient direction on each mini-batch data
+            self.optimizer.step()
+            mean_loss /= MINI_BATCHSIZE
+            # do validation each 100 batch
+            if batch % 100 == 1:
+                metric = test_model(self.model, dataset="val")
+                if metric > self.best_metric:
+                    self.best_metric = metric
+                    file_name = save_model(
+                        self.model, f"./checkpoints/{self.train_hashcode}", "best_model"
+                    )
+                    self.best_model_path = file_name
+                    self.logger.info(
+                        f"{epoch=}, {batch=}, train loss={mean_loss : .4f}, valid metric={metric: .4f}.\n"
+                        f"Find better model, saved to {file_name}."
+                    )
+                else:
+                    self.logger.info(
+                        f"{epoch=}, {batch=}, train loss={mean_loss : .4f}, valid metric={metric: .4f}"
+                    )
+        return mean_loss
+
+
+if __name__ == "__main__":
+    trainer = Trainer(
+        hidden_size=[256, 128, 64], activation=F.ReLU, regularization=None
+    )
+    trainer.train()
+    trainer.test()

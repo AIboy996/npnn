@@ -4,15 +4,18 @@ In this file we test npnn api, compared with torch api ^&^.
 
 import unittest
 
-from .base import np
-from .autograd import Tensor
-from .functional import *
+from npnn.base import np
+from npnn.autograd import Tensor
+from npnn.functional import Add, Norm, Inner, Sum, LogSoftmax, Softmax, ReLU, Flatten
 
 import torch  # only for test, ensure computation of npnn is right
 
 
 TEST_SIZE = 5
-rand = lambda size: np.random.random(size=size) - 0.5
+
+
+def rand(size):
+    return np.random.random(size=size) - 0.5
 
 
 class TestAutograd(unittest.TestCase):
@@ -221,8 +224,8 @@ class TestAutograd(unittest.TestCase):
         h1 = relu(add(inner(A, x), a))
         h2 = relu(add(inner(B, h1), b))
         y_hat = relu(add(inner(C, h2), c))
-        l = norm(add(y_hat, (-y)))
-        l.backward()
+        loss = norm(add(y_hat, (-y)))
+        loss.backward()
         nnn_grad = [A.grad, B.grad, C.grad, a.grad, b.grad, c.grad]
 
         # torch api
@@ -253,8 +256,8 @@ class TestAutograd(unittest.TestCase):
         h1 = torch.relu(A @ x + a)
         h2 = torch.relu(B @ h1 + b)
         y_hat = torch.relu(C @ h2 + c)
-        l = torch.norm(y_hat - y, p=2)
-        l.backward()
+        loss = torch.norm(y_hat - y, p=2)
+        loss.backward()
         torch_grad = [A.grad, B.grad, C.grad, a.grad, b.grad, c.grad]
 
         # check float almost equal

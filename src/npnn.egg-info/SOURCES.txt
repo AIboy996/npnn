@@ -7,9 +7,9 @@ src/npnn/base.py
 src/npnn/functional.py
 src/npnn/nn.py
 src/npnn/optim.py
-src/npnn/test_autograd.py
 src/npnn.egg-info/PKG-INFO
 src/npnn.egg-info/SOURCES.txt
 src/npnn.egg-info/dependency_links.txt
 src/npnn.egg-info/requires.txt
 src/npnn.egg-info/top_level.txt
+tests/test_autograd.py

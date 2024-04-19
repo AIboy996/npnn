@@ -35,11 +35,11 @@ def test_NeuralNetwork():
     model = FNN(28*28, 10)
     x = Tensor(np.random.random((1, 28, 28)))
     logits = model(x)
-    l = F.Norm()(logits)
-    l.backward()
+    loss = F.Norm()(logits)
+    loss.backward()
     print(model)
     print(model.parameters()[-1].grad)
-    print(l)
+    print(loss)
 
 
 if __name__ == "__main__":

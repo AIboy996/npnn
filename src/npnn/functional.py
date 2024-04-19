@@ -56,7 +56,7 @@ class Add(Operation):
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
-        """
+        r"""
         1. `d(X+Y) / dX = \mathbb{I} \otimes \mathbb{I}` if X is matrix
         2. `d(x+y) / dx = \mathbb{I}` if x is vector
         """
@@ -82,7 +82,7 @@ class Inner(Operation):
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
-        """
+        r"""
         if x is matrix
         d x@y / dx[i,j] = [0,...,y[j],... ,0], where y[j] is the ith component
         or in tensor product: `d x@y / dX = c' \otimes \mathbb{I}`

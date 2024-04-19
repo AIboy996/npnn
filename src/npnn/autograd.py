@@ -1,6 +1,5 @@
 """
-Autograd algorithm implementation. 
-
+Autograd algorithm implementation.
 Calcute Tensor's grad by tracking `back_childs` and `back_f`(in fact these two generate a computional tree).
 """
 
@@ -98,6 +97,9 @@ class Tensor:
         """
         When attr not defined, try to find in `self.data`, for example `self.shape` or `self.ndim`
         """
+        # without this statement, `self.data` will raise a RecursionError in pickle.loads
+        if name == 'data':
+            return None
         return self.data.__getattribute__(name)
 
     def __repr__(self) -> str:
@@ -112,7 +114,7 @@ class Tensor:
 
 
 if __name__ == "__main__":
-    from src.functional import *
+    from .functional import Norm, Flatten
 
     x = Tensor(np.random.random((3, 3)), requires_grad=True)
     y = Norm()(Flatten()(x))
