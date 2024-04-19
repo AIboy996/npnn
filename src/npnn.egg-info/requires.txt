@@ -1,4 +1,7 @@
 numpy
 
-[cuda]
-cupy
+[cuda11x]
+cupy-cuda11x
+
+[cuda12x]
+cupy-cuda12x
