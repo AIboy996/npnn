@@ -1,7 +1,7 @@
-# [npnn](https://pypi.org/project/npnn/0.0.1/)
+# [npnn](https://pypi.org/project/npnn/)
 > NumPy Neural Network
 
-[![PyPI - Version](https://img.shields.io/pypi/v/npnn)](https://pypi.org/project/npnn/0.0.1/)
+[![PyPI - Version](https://img.shields.io/pypi/v/npnn)](https://pypi.org/project/npnn/)
 ![PyPI - Implementation](https://img.shields.io/pypi/implementation/npnn)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/npnn)
 <!-- ![PyPI - Downloads](https://img.shields.io/pypi/dm/npnn) -->
@@ -50,4 +50,5 @@ Construct and Train a neural network on [Fashion-MNIST](https://github.com/zalan
 - `train.py`: model training
 - `search.py`: parameters searching
 - `test.py`: model testing
-- `utils.py`: some misc function, such as `save_mode`
+- `viz.py`: visualization
+- `utils.py`: some misc function, such as `save_model`
