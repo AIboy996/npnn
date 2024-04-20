@@ -3,7 +3,6 @@
 import logging
 import os
 import time
-import pickle
 from typing import Literal
 
 import npnn.functional as F
@@ -13,7 +12,7 @@ from npnn import Tensor
 from dataset import load_mnist
 from model import FNN
 from test import test_model
-from utils import save_model, loads
+from utils import save_model, load_model
 
 
 IMAGE_SIZE = 28 * 28
@@ -29,6 +28,7 @@ class Trainer:
         activation=F.ReLU,
         regularization: Literal[None, "l1", "l2"] = None,
         regular_strength: float = 0.01,
+        lr: float = 0.01,
     ) -> None:
         self.model = FNN(
             in_size=IMAGE_SIZE,
@@ -38,7 +38,7 @@ class Trainer:
         )
         self.optimizer = Adam(
             self.model.parameters(),
-            lr=0.01,
+            lr=lr,
             regularization=regularization,
             regular_strength=regular_strength,
         )
@@ -51,10 +51,10 @@ class Trainer:
         self.criterion = F.NLL()
         date = time.strftime(r"%Y_%m%d")
         self.train_hashcode = f"{date}({int(time.time())})"
-        self.setup_logger()
+        self.logger = self.setup_logger()
 
     def setup_logger(self):
-        self.logger = logging.getLogger(__name__)
+        logger = logging.getLogger()
         if not os.path.exists("./logs"):
             os.mkdir("./logs")
         if not os.path.exists("./checkpoints"):
@@ -66,6 +66,7 @@ class Trainer:
             format="%(asctime)s %(levelname)-8s %(message)s",
             datefmt="%Y-%m-%d %H:%M",
         )
+        return logger
 
     def train(self):
         self.best_metric = 0
@@ -75,13 +76,14 @@ class Trainer:
         self.logger.info(f"training done, best metric = {self.best_metric}")
 
     def test(self):
-        best_model = pickle.loads(loads(self.best_model_path))
+        best_model = load_model(self.best_model_path)
         metric = test_model(best_model, dataset="test")
         self.logger.info(f"test done, metric = {metric}")
+        return metric
 
     def train_epoch(self, epoch):
         dataset_size = len(self.images)
-        for batch in range(dataset_size // MINI_BATCHSIZE)[:1000]:
+        for batch in range(dataset_size // MINI_BATCHSIZE):
             mean_loss = 0
             self.optimizer.zero_grad()
             for x, y in zip(
@@ -102,12 +104,14 @@ class Trainer:
                 if metric > self.best_metric:
                     self.best_metric = metric
                     file_name = save_model(
-                        self.model, f"./checkpoints/{self.train_hashcode}", "best_model"
+                        self.model,
+                        f"./checkpoints/{self.train_hashcode}",
+                        "best_model",
                     )
                     self.best_model_path = file_name
                     self.logger.info(
                         f"{epoch=}, {batch=}, train loss={mean_loss : .4f}, valid metric={metric: .4f}.\n"
-                        f"Find better model, saved to {file_name}."
+                        f"Find better model, saved to {file_name}.",
                     )
                 else:
                     self.logger.info(

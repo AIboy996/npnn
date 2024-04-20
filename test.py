@@ -1,9 +1,9 @@
 """test model"""
 
-from dataset import load_mnist
 from npnn import Tensor
-import pickle
-from utils import loads
+
+from dataset import load_mnist
+from utils import load_model
 
 
 def test_model(model, dataset="val"):
@@ -19,8 +19,6 @@ def test_model(model, dataset="val"):
 
 
 if __name__ == "__main__":
-    best_model = pickle.loads(
-        loads(r"checkpoints\2024_0419(1713529686)\best_model.pkl")
-    )
+    best_model = load_model(r"checkpoints\2024_0419(1713542060)\best_model.xz")
     metric = test_model(best_model, dataset="test")
     print(f"test done, metric = {metric}")
