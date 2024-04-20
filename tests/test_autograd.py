@@ -253,7 +253,7 @@ class TestAutograd(unittest.TestCase):
             b = torch.from_numpy(b.data)
             c = torch.from_numpy(c.data)
             x = torch.from_numpy(x.data)
-            y = torch.from_numpy(y.data).long()
+            y = torch.from_numpy(y.data)
         A.requires_grad = True
         B.requires_grad = True
         C.requires_grad = True
