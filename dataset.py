@@ -50,7 +50,7 @@ def download_minist(dataset_path="./data"):
 
 
 def load_mnist(
-    dataset_path, kind: Literal["train", "val", "test"] = "train", train_prop=0.9
+    dataset_path, kind: Literal["train", "val", "test"] = "train", train_prop=0.8
 ):
     """Load Fashion MNIST data from `dataset_path`"""
 
@@ -68,7 +68,7 @@ def load_mnist(
         images = np.frombuffer(imgpath.read(), dtype=np.uint8, offset=16).reshape(
             len(labels), 784
         )
-    # default is 54000, train:val:test = 5.4 : 0.6 : 1
+    # default is 48000, train:val:test = 4.8 : 1.2 : 1
     train_len = int(train_prop * images.shape[0])
     if kind == "train":
         return images[:train_len, :], labels[:train_len]

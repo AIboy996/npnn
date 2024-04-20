@@ -14,9 +14,9 @@ class Linear(Module):
         self.in_size = in_size
         self.out_size = out_size
         self.bias = bias
-        self.A = Tensor(rand((out_size, in_size)), requires_grad=True)
+        self.A = Tensor(rand((1, out_size, in_size)), requires_grad=True)
         if self.bias:
-            self.b = Tensor(rand((out_size,)), requires_grad=True)
+            self.b = Tensor(rand((1, out_size, 1)), requires_grad=True)
 
     def forward(self, x: Tensor) -> Tensor:
         inner = Inner()

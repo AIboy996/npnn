@@ -41,12 +41,13 @@ class SGD(Optimizer):
                 g = param.grad / param.back_counter
             elif self.regularization == "l2":
                 g = (
-                    param.grad + self.regular_strength * 2 * param.data
-                ) / param.back_counter
+                    param.grad / param.back_counter
+                    + self.regular_strength * 2 * param.data
+                )
             elif self.regularization == "l1":
-                g = (
-                    param.grad + self.regular_strength * np.sign(param.data)
-                ) / param.back_counter
+                g = param.grad / param.back_counter + self.regular_strength * np.sign(
+                    param.data
+                )
             else:
                 raise ValueError("Invalid regularization method.")
             if self.weight_decay != 0:
@@ -103,12 +104,13 @@ class Adam(Optimizer):
                 g = param.grad / param.back_counter
             elif self.regularization == "l2":
                 g = (
-                    param.grad + self.regular_strength * 2 * param.data
-                ) / param.back_counter
+                    param.grad / param.back_counter
+                    + self.regular_strength * 2 * param.data
+                )
             elif self.regularization == "l1":
-                g = (
-                    param.grad + self.regular_strength * np.sign(param.data)
-                ) / param.back_counter
+                g = param.grad / param.back_counter + self.regular_strength * np.sign(
+                    param.data
+                )
             else:
                 raise ValueError("Invalid regularization method.")
             if self.weight_decay != 0:

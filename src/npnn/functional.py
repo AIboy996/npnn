@@ -20,6 +20,7 @@ __all__ = [
 
 
 def one_hot(x, NUM_CLASS):
+    """x.shape = (n, )"""
     y = np.zeros((x.size, NUM_CLASS))
     y[np.arange(x.size), x] = 1
     return y
@@ -47,7 +48,11 @@ def singleton(original_cls):
 
 @singleton
 class Add(Operation):
-    """z = x + y"""
+    """
+    z = x + y
+
+    x.shape = (batch, m, n)
+    """
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
         res = Tensor(x.data + y.data)
@@ -56,14 +61,10 @@ class Add(Operation):
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
-        r"""
-        1. `d(X+Y) / dX = \mathbb{I} \otimes \mathbb{I}` if X is matrix
-        2. `d(x+y) / dx = \mathbb{I}` if x is vector
-        """
         x = back_childs[idx]
-        assert x.ndim <= 2
-        if x.ndim == 1:
-            return np.eye(*x.shape)
+        b, m, n = x.shape
+        if n == 1:
+            return np.tile(np.eye(m), (b, 1, 1))
         else:
             raise NotImplementedError("No need.")
 
@@ -71,42 +72,46 @@ class Add(Operation):
 @singleton
 class Inner(Operation):
     """
-    z = x @ y where z is vector or scalar
+    z = x @ y
+
+    x.shape = (batch, m, n)
+    y.shape = (batch, n, k)
+    z.shape = (batch, m, k)
     """
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
-        res = Tensor(x.data @ y.data)
-        assert res.ndim == 1, "result should be vector or scalar"
+        res = Tensor(np.einsum("bmn,bnk->bmk", x.data, y.data))
         res.back_f = self
         res.back_childs = (x, y)
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
-        r"""
-        if x is matrix
-        d x@y / dx[i,j] = [0,...,y[j],... ,0], where y[j] is the ith component
-        or in tensor product: `d x@y / dX = c' \otimes \mathbb{I}`
-
-        elif x is vector
-        d x@y / dx = y.T
-        """
         x, y = back_childs
         x, y = x.data, y.data
+        b1, m, n = x.shape
+        b2, n, k = y.shape
+        b = b1 if b2 == 1 else b2
         if idx == 0:
-            if x.ndim == 1:
-                return y.T
+            # if x is vector
+            if m == 1:
+                return y.transpose((0, 2, 1))
+            # if x is matrix, then y must be vector
             else:
-                m, n = x.shape
-                res = np.zeros((m, m, n))
-                res[np.arange(m), np.arange(m), :] = y
+                assert k == 1
+                res = np.zeros((b, m, m, n))
+                res[:, np.arange(m), np.arange(m), :] = np.tile(
+                    y.transpose((0, 2, 1)), (1, m, 1)
+                )
                 return res
         else:
-            if y.ndim == 1:
+            if k == 1:
                 return x
             else:
-                m, n = y.shape
-                res = np.zeros((n, m, n))
-                res[np.arange(n), :, np.arange(n)] = x
+                assert m == 1
+                res = np.zeros((b, k, n, k))
+                res[:, np.arange(k), :, np.arange(k)] = np.tile(y, (1, k, 1)).transpose(
+                    1, 0, 2
+                )
                 return res
 
 
@@ -115,20 +120,20 @@ class Flatten(Operation):
     """y = x.flatten()"""
 
     def forward(self, x: Tensor) -> Tensor:
-        res = Tensor(x.data.flatten())
+        res = Tensor(x.data.reshape(x.data.shape[0], -1, 1))
         res.back_f = self
         res.back_childs = (x,)
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
-        if x.ndim == 1:
-            return np.eye(*x.shape)
+        b, m, n = x.shape
+        if n == 1:
+            return np.tile(np.eye(m), (b, 1, 1))
         else:
-            m, n = x.shape
-            res = np.zeros((m * n, m, n))
+            res = np.zeros((b, m * n, m, n))
             for i in range(m * n):
-                res[i, i // m, i % n] = 1
+                res[:, i, i // m, i % n] = 1
             return res
 
 
@@ -137,28 +142,30 @@ class Sum(Operation):
     """y = sum(X)"""
 
     def forward(self, x: Tensor) -> Tensor:
-        res = Tensor(x.data.sum().reshape((1,)))
+        res = Tensor(x.data.sum(axis=(1, 2)).reshape((-1, 1, 1)))
         res.back_f = self
         res.back_childs = (x,)
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         """Easy"""
-        return np.ones_like(back_childs[idx])
+        return np.ones_like(back_childs[idx]).transpose((0, 2, 1))
 
 
 @singleton
 class Norm(Operation):
     """
     y = sqrt(x.T @ x)
+
+    x.shape = (b,n,1)
     """
 
     def forward(self, x: Tensor) -> Tensor:
-        m = np.abs(x.data).max()
+        # avoid overflow
+        m = np.abs(x.data).max(axis=(1, 2), keepdims=True)  # shape=(b,1,1)
         a = x.data / m
-        # in my test, arr@arr is faster than np.inner(a,a) and np.dot(a,a)
-        # and np.sqrt(a@a) is faster than np.linalg.norm(a, 2)
-        res = Tensor(m * np.sqrt(a @ a).reshape((1,)))
+        normsq = (a * a).sum(axis=(1, 2)).reshape(-1, 1, 1)
+        res = Tensor(m * np.sqrt(normsq))
         res.back_f = self
         res.back_childs = (x,)
         return res
@@ -169,7 +176,7 @@ class Norm(Operation):
         """
         x = back_childs[idx]
         y = self.forward(x)
-        return x.data / y.data
+        return (x.data / y.data).transpose((0, 2, 1))
 
 
 @singleton
@@ -177,10 +184,12 @@ class NLL(Operation):
     """
     Negative Log Likelihod
     l = -sum(x @ y)
+
+    x,y shape = (batch, n, 1)
     """
 
     def forward(self, x: Tensor, y: Tensor) -> Tensor:
-        res = Tensor(-(x.data @ y.data).sum().reshape((1,)))
+        res = Tensor(-(x.data * y.data).sum(axis=(1, 2)).reshape(-1, 1, 1))
         res.back_f = self
         res.back_childs = (x, y)
         return res
@@ -189,18 +198,20 @@ class NLL(Operation):
         """
         dl / dx = -y, dl / dy = -x
         """
-        return -back_childs[1 - idx].data
+        return -back_childs[1 - idx].data.transpose((0, 2, 1))
 
 
 @singleton
 class Log(Operation):
     """
     y = x.log()
+
+    x.shape = (batch, n, 1)
     """
 
     def forward(self, x: Tensor) -> Tensor:
         assert (x.data > 0).all()
-        res = Tensor(np.log(x))
+        res = Tensor(np.log(x.data))
         res.back_f = self
         res.back_childs = (x,)
         return res
@@ -209,75 +220,74 @@ class Log(Operation):
         """
         dy / dx = diag(1/x)
         """
-        return np.diag(1 / back_childs[idx].data)
+        x = back_childs[idx].data
+        b, n = x.shape[:2]
+        # broadcast
+        return np.tile(np.eye(n), (b, 1, 1)) * (1 / x)
 
 
 @singleton
 class Softmax(Operation):
     """
     y = softmax(x) = x.exp() / x.exp().sum(), this is an approximation for `argamx`
+
+    x.shape = (batch, n, 1)
     """
 
     @staticmethod
     def softmax(x: np.ndarray) -> np.ndarray:
-        e = np.exp(x - x.max())
-        return e / e.sum()
+        e = np.exp(x - x.max(axis=(1, 2), keepdims=True))
+        return e / e.sum(axis=(1, 2), keepdims=True)
 
     def forward(self, x: Tensor) -> Tensor:
         # avoid overflow
-        res = Tensor(Softmax.softmax(x.data))
+        res = Tensor(self.softmax(x.data))
         res.back_f = self
         res.back_childs = (x,)
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
+        b, n = x.shape[:2]
         y = self.softmax(x.data)
-        vec = y.reshape((-1, 1))
         # broadcast
-        return np.diag(y) - vec @ vec.T
-        # n = x.shape[0]
-        # grad = np.zeros((n, n))
-        # for i in range(n):
-        #     for j in range(i, n):
-        #         grad[i, j] = y[i] * (1 - y[i]) if i == j else -y[i] * y[j]
-        #         grad[j, i] = grad[i, j]
-        # return grad
+        return np.tile(np.eye(n), (b, 1, 1)) * y - np.einsum(
+            "bjk,bkl->bjl", y, y.transpose((0, 2, 1))
+        )
 
 
 @singleton
 class LogSoftmax(Operation):
     """
     y = log(softmax(x)), more numerical stable version.
+
+    x.shape = (batch, n, 1)
     """
 
     def forward(self, x: Tensor) -> Tensor:
-        a = x.data
-        m = np.abs(a).max()
-        e = np.exp(a - m)
+        m = np.abs(x.data).max(axis=(1, 2), keepdims=True)
+        e = np.exp(x.data - m)
         # avoid overflow
-        res = Tensor(a - m - np.log(e.sum()))
+        log_softmax = x.data - m - np.log(e.sum(axis=(1, 2), keepdims=True))
+        res = Tensor(log_softmax)
         res.back_f = self
         res.back_childs = (x,)
         return res
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx]
-        n = x.shape[0]
-        y = Softmax.softmax(x.data).reshape((1, n))
+        b, n = x.shape[:2]
+        y = Softmax.softmax(x.data).transpose((0, 2, 1))
         # broadcast
-        return np.eye(n) - y
-        # grad = np.zeros((n,n))
-        # for i in range(n):
-        #     for j in range(n):
-        #         grad[i, j] = 1 - y[j] if i == j else -y[j]
-        # return grad
+        return np.tile(np.eye(n), (b, 1, 1)) - y
 
 
 @singleton
 class ReLU(Operation):
     """
     y = relu(x) = max(0,x)
+
+    x.shape = (batch, n, 1)
     """
 
     def forward(self, x: Tensor) -> Tensor:
@@ -288,6 +298,8 @@ class ReLU(Operation):
 
     def gradient(self, back_childs: tuple, idx=0) -> np.ndarray:
         x = back_childs[idx].data
+        b, n = x.shape[:2]
         grad = np.zeros_like(x)
         grad[x > 0] = 1
-        return np.diag(grad)
+        # broadcast
+        return np.tile(np.eye(n), (b, 1, 1)) * grad

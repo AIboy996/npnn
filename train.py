@@ -17,8 +17,8 @@ from utils import save_model, load_model
 
 IMAGE_SIZE = 28 * 28
 NUM_CLASS = 10
-TOTAL_EPOCH = 2
-MINI_BATCHSIZE = 5
+TOTAL_EPOCH = 1
+MINI_BATCHSIZE = 12
 
 
 class Trainer:
@@ -83,23 +83,24 @@ class Trainer:
 
     def train_epoch(self, epoch):
         dataset_size = len(self.images)
+        total_loss = 0
         for batch in range(dataset_size // MINI_BATCHSIZE):
-            mean_loss = 0
             self.optimizer.zero_grad()
-            for x, y in zip(
-                self.images[MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1),],
-                self.labels[MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1),],
-            ):
-                y_hat = self.model(Tensor(x))
-                y = Tensor(y)
-                loss = self.criterion(y_hat, y)
-                loss.backward()
-                mean_loss += loss.data[0]
+            x = self.images[
+                MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1), :, None
+            ]
+            y = self.labels[
+                MINI_BATCHSIZE * batch: MINI_BATCHSIZE * (batch + 1), :, None
+            ]
+            y_hat = self.model(Tensor(x))
+            y = Tensor(y)
+            loss = self.criterion(y_hat, y)
+            loss.backward()
+            total_loss += loss.data.mean().item()  # batch mean loss
             # take one setp on gradient direction on each mini-batch data
             self.optimizer.step()
-            mean_loss /= MINI_BATCHSIZE
-            # do validation each 100 batch
-            if batch % 100 == 1:
+            # do validation each 50 batch
+            if batch % 50 == 1:
                 metric = test_model(self.model, dataset="val")
                 if metric > self.best_metric:
                     self.best_metric = metric
@@ -110,19 +111,19 @@ class Trainer:
                     )
                     self.best_model_path = file_name
                     self.logger.info(
-                        f"{epoch=}, {batch=}, train loss={mean_loss : .4f}, valid metric={metric: .4f}.\n"
+                        f"{epoch=}, {batch=}, train loss={total_loss/batch : .4f}, valid metric={metric: .4f}.\n"
                         f"Find better model, saved to {file_name}.",
                     )
                 else:
                     self.logger.info(
-                        f"{epoch=}, {batch=}, train loss={mean_loss : .4f}, valid metric={metric: .4f}"
+                        f"{epoch=}, {batch=}, train loss={total_loss/batch : .4f}, valid metric={metric: .4f}"
                     )
-        return mean_loss
+        return total_loss / batch
 
 
 if __name__ == "__main__":
     trainer = Trainer(
-        hidden_size=[256, 128, 64], activation=F.ReLU, regularization=None
+        hidden_size=[256, 128], activation=F.ReLU, regularization=None
     )
     trainer.train()
     trainer.test()
