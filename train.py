@@ -1,8 +1,9 @@
 """train model"""
 
-import logging
 import os
 import time
+import json
+import logging
 from typing import Literal
 
 import npnn.functional as F
@@ -17,7 +18,7 @@ from utils import save_model, load_model
 
 IMAGE_SIZE = 28 * 28
 NUM_CLASS = 10
-TOTAL_EPOCH = 1
+TOTAL_EPOCH = 4
 
 
 class Trainer:
@@ -43,6 +44,7 @@ class Trainer:
             regularization=regularization,
             regular_strength=regular_strength,
         )
+        # load training data
         train_images, train_labels = load_mnist("./data", "train")
         self.images = train_images
         # trun into one hot
@@ -50,9 +52,14 @@ class Trainer:
         # model's last layer is LogSoftmax, so we use NLL Loss function here
         # this is equivalent to CrossEntropy Loss
         self.criterion = F.NLL()
+
+        # setup logger
         date = time.strftime(r"%Y_%m%d")
         self.train_hashcode = f"{date}({int(time.time())})"
         self.logger = self.setup_logger()
+
+        self.train_loss = []
+        self.valid_metric = []
 
     def setup_logger(self):
         logger = logging.getLogger()
@@ -104,6 +111,9 @@ class Trainer:
             # do validation each 50 batch
             if batch % 50 == 1:
                 metric = test_model(self.model, dataset="val")
+                loss = total_loss / batch
+                self.train_loss.append(loss)
+                self.valid_metric.append(metric)
                 if metric > self.best_metric:
                     early_stop_count = 0
                     self.best_metric = metric
@@ -114,35 +124,66 @@ class Trainer:
                     )
                     self.best_model_path = file_name
                     self.logger.info(
-                        f"{epoch=}, {batch=}, train loss={total_loss/batch : .4f}, valid metric={metric: .4f}.\n"
+                        f"{epoch=}, {batch=}, train loss={loss : .4f}, valid metric={metric: .4f}.\n"
                         f"Find better model, saved to {file_name}.",
                     )
                 else:
                     early_stop_count += 1
                     self.logger.info(
-                        f"{epoch=}, {batch=}, train loss={total_loss/batch : .4f}, valid metric={metric: .4f}"
+                        f"{epoch=}, {batch=}, train loss={loss : .4f}, valid metric={metric: .4f}"
                     )
-            if early_stop_count > (20000 // self.batch_size // 50):
+            if early_stop_count > (15000 // self.batch_size // 50):
                 f"{epoch=}, Early stop since metric have no improvement for {early_stop_count} consecutive batches."
                 break
         return total_loss / batch
 
     def __exit__(self, exc_type, exc_value, traceback):
+        import gc
+
         # close logging handler
         file_handler = self.logger.handlers[0]
         self.logger.removeHandler(file_handler)
         file_handler.close()
-        if np.__name__ == 'cupy':
+        if np.__name__ == "cupy":
             # cupy free memory
             np.get_default_memory_pool().free_all_blocks()
+        gc.collect()
 
     def __enter__(self):
         return self
 
 
-if __name__ == "__main__":
+def train(
+    hidden_size=[128],
+    batch_size=16,
+    learning_rate=0.001,
+    regularization=None,
+    regular_strength=0,
+):
     with Trainer(
-        hidden_size=[256], activation=F.ReLU, regularization=None, batch_size=32
+        hidden_size=hidden_size,
+        activation=F.ReLU,
+        regularization=regularization,
+        regular_strength=regular_strength,
+        lr=learning_rate,
+        batch_size=batch_size,
     ) as trainer:
         trainer.train()
-        trainer.test()
+        metric = trainer.test()
+        train_log = dict(
+            train_id=trainer.train_hashcode,
+            accuracy=metric,
+            hidden_size=hidden_size,
+            batch_size=batch_size,
+            learning_rate=learning_rate,
+            regularization=str(regularization),
+            regular_strength=regular_strength,
+            train_loss=trainer.train_loss,
+            valid_metric=trainer.valid_metric,
+        )
+    with open(f"./logs/{trainer.train_hashcode}.json", "w+") as f:
+        json.dump(train_log, f)
+
+
+if __name__ == "__main__":
+    train()

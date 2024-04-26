@@ -16,3 +16,5 @@ checkpoints
 build
 dist
 .vscode
+
+venv

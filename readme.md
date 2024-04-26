@@ -31,6 +31,10 @@ check [cupy documentation](https://docs.cupy.dev/en/stable/install.html#installi
 
 See [npnn WIKI](https://github.com/AIboy996/npnn/wiki).
 
+### Known issues
+
+See [npnn known-issues](https://github.com/AIboy996/npnn/wiki#known-issues).
+
 ## Work with npnn!
 > Here we will construct a image classification neural network with npnn.
 
@@ -52,3 +56,15 @@ Construct and Train a neural network on [Fashion-MNIST](https://github.com/zalan
 - `test.py`: model testing
 - `viz.py`: visualization
 - `utils.py`: some misc function, such as `save_model`
+
+run `search.py`, you can get a table like:
+
+no|train_id|accuracy|hidden_size|batch_size|learning_rate|regularization|regular_strength
+--|--|--|--|--|--|--|--
+0|2024_0423(1713841292)|0.8306|[384]|3|0.002|None|0.0
+1|2024_0423(1713845802)|0.8145|[384]|3|0.002|l2|0.1
+2|2024_0423(1713849349)|0.8269|[384]|3|0.002|l2|0.01
+3|2024_0423(1713853939)|0.8255|[384]|3|0.002|l2|0.005
+4|2024_0423(1713857657)|0.8373|[384]|3|0.002|l2|0.001
+
+train log file and saved model weights can be found in `./logs` and `./checkpoints` folder.
