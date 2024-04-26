@@ -13,8 +13,10 @@ result.json
 # saved model
 checkpoints
 
+# build cache
 build
 dist
+*.egg-info/
 .vscode
 
 venv
