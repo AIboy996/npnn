@@ -1,7 +1,6 @@
 """
 # NPNN
-> NumPy Neural Network
-
+> [NumPy Neural Network](https://github.com/AIboy996/npnn/)
 """
 
 from .autograd import Tensor

@@ -156,6 +156,6 @@ class Tensor:
 if __name__ == "__main__":
     from .functional import Inner
     x = Tensor(np.random.random((1, 3, 1)), requires_grad=True)
-    loss = Inner()(x.T, x)  # this condition is not included
+    loss = Inner()(x.T, x)  # this case is not considered
     loss.backward()
     print(x.grad)  # we will get a wrong grad.
