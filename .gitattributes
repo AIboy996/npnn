@@ -1,2 +1,2 @@
 # exclude from statistics
-report.ipynb -linguist-vendored
+report.ipynb linguist-vendored
