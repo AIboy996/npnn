@@ -1,8 +1,10 @@
 # python cache file
 __pycache__
+.ipynb_checkpoints
 
 # train log file
-logs
+logs/search1/*
+logs/search2/*
 
 # data file
 data
@@ -11,7 +13,7 @@ data
 result.json
 
 # saved model
-checkpoints
+checkpoints/*
 
 # build cache
 build
@@ -20,3 +22,31 @@ dist
 .vscode
 
 venv
+
+# include some train log and model weight
+!logs/search2/2024_0423(1713857657).json
+!logs/search2/2024_0426(1714116650).json
+!logs/search2/2024_0425(1713993322).json
+!logs/search2/2024_0423(1713841292).json
+!logs/search1/2024_0423(1713807562).json
+!logs/search1/2024_0423(1713808209).json
+!logs/search1/2024_0423(1713806930).json
+!logs/search1/2024_0423(1713816056).json
+
+!logs/search2/2024_0423(1713857657).log
+!logs/search2/2024_0426(1714116650).log
+!logs/search2/2024_0425(1713993322).log
+!logs/search2/2024_0423(1713841292).log
+!logs/search1/2024_0423(1713807562).log
+!logs/search1/2024_0423(1713808209).log
+!logs/search1/2024_0423(1713806930).log
+!logs/search1/2024_0423(1713816056).log
+
+!checkpoints/2024_0423(1713857657)
+!checkpoints/2024_0426(1714116650)
+!checkpoints/2024_0425(1713993322)
+!checkpoints/2024_0423(1713841292)
+!checkpoints/2024_0423(1713807562)
+!checkpoints/2024_0423(1713808209)
+!checkpoints/2024_0423(1713806930)
+!checkpoints/2024_0423(1713816056)

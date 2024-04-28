@@ -1,0 +1,139 @@
+2024-04-23 01:50 INFO     epoch=0, batch=1, train loss= 40746378.5624, valid metric= 0.0983.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:50 INFO     epoch=0, batch=51, train loss= 5032078.9043, valid metric= 0.0958
+2024-04-23 01:50 INFO     epoch=0, batch=101, train loss= 2800170.7429, valid metric= 0.1048.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:50 INFO     epoch=0, batch=151, train loss= 1983094.7296, valid metric= 0.3006.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:50 INFO     epoch=0, batch=201, train loss= 1540694.9633, valid metric= 0.1548
+2024-04-23 01:50 INFO     epoch=0, batch=251, train loss= 1279882.2401, valid metric= 0.1082
+2024-04-23 01:50 INFO     epoch=0, batch=301, train loss= 1111605.0056, valid metric= 0.4603.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:51 INFO     epoch=0, batch=351, train loss= 975073.1324, valid metric= 0.4713.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:51 INFO     epoch=0, batch=401, train loss= 868663.9951, valid metric= 0.4848.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:51 INFO     epoch=0, batch=451, train loss= 787635.4154, valid metric= 0.4672
+2024-04-23 01:51 INFO     epoch=0, batch=501, train loss= 721007.9215, valid metric= 0.6078.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:51 INFO     epoch=0, batch=551, train loss= 668760.0300, valid metric= 0.4441
+2024-04-23 01:51 INFO     epoch=0, batch=601, train loss= 621093.0368, valid metric= 0.5677
+2024-04-23 01:51 INFO     epoch=0, batch=651, train loss= 580159.8836, valid metric= 0.5411
+2024-04-23 01:51 INFO     epoch=0, batch=701, train loss= 547456.7284, valid metric= 0.5753
+2024-04-23 01:51 INFO     epoch=0, batch=751, train loss= 515917.4055, valid metric= 0.6559.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:52 INFO     epoch=0, batch=801, train loss= 488268.1689, valid metric= 0.6135
+2024-04-23 01:52 INFO     epoch=0, batch=851, train loss= 463261.4110, valid metric= 0.4858
+2024-04-23 01:52 INFO     epoch=0, batch=901, train loss= 440355.6919, valid metric= 0.5978
+2024-04-23 01:52 INFO     epoch=0, batch=951, train loss= 419825.7569, valid metric= 0.6691.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:52 INFO     epoch=0, batch=1001, train loss= 401716.6265, valid metric= 0.5795
+2024-04-23 01:52 INFO     epoch=0, batch=1051, train loss= 385567.2705, valid metric= 0.7312.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:52 INFO     epoch=0, batch=1101, train loss= 369815.4170, valid metric= 0.6313
+2024-04-23 01:52 INFO     epoch=0, batch=1151, train loss= 356193.5306, valid metric= 0.7132
+2024-04-23 01:52 INFO     epoch=0, batch=1201, train loss= 343003.4019, valid metric= 0.7230
+2024-04-23 01:52 INFO     epoch=0, batch=1251, train loss= 330919.6066, valid metric= 0.7149
+2024-04-23 01:53 INFO     epoch=0, batch=1301, train loss= 319389.2354, valid metric= 0.6525
+2024-04-23 01:53 INFO     epoch=0, batch=1351, train loss= 308666.3332, valid metric= 0.7292
+2024-04-23 01:53 INFO     epoch=0, batch=1401, train loss= 298692.4944, valid metric= 0.7424.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:53 INFO     epoch=0, batch=1451, train loss= 289111.1473, valid metric= 0.7242
+2024-04-23 01:53 INFO     epoch=0, batch=1501, train loss= 280449.2667, valid metric= 0.7508.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:53 INFO     epoch=0, batch=1551, train loss= 272024.7535, valid metric= 0.7282
+2024-04-23 01:53 INFO     epoch=0, batch=1601, train loss= 264032.4337, valid metric= 0.7234
+2024-04-23 01:53 INFO     epoch=0, batch=1651, train loss= 256519.0753, valid metric= 0.7520.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:53 INFO     epoch=0, batch=1701, train loss= 249484.4912, valid metric= 0.7159
+2024-04-23 01:54 INFO     epoch=0, batch=1751, train loss= 242857.9978, valid metric= 0.7584.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:54 INFO     epoch=0, batch=1801, train loss= 236551.2525, valid metric= 0.7784.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:54 INFO     epoch=0, batch=1851, train loss= 230450.1355, valid metric= 0.7823.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:54 INFO     epoch=0, batch=1901, train loss= 224752.7826, valid metric= 0.7248
+2024-04-23 01:54 INFO     epoch=0, batch=1951, train loss= 219334.3911, valid metric= 0.7273
+2024-04-23 01:54 INFO     epoch=0, batch=2001, train loss= 214119.8086, valid metric= 0.7505
+2024-04-23 01:54 INFO     epoch=0, batch=2051, train loss= 209104.7715, valid metric= 0.7011
+2024-04-23 01:54 INFO     epoch=0, batch=2101, train loss= 204498.2648, valid metric= 0.7708
+2024-04-23 01:54 INFO     epoch=0, batch=2151, train loss= 199998.7174, valid metric= 0.7783
+2024-04-23 01:54 INFO     epoch=0, batch=2201, train loss= 195696.6165, valid metric= 0.7838.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:55 INFO     epoch=0, batch=2251, train loss= 191621.7317, valid metric= 0.7744
+2024-04-23 01:55 INFO     epoch=0, batch=2301, train loss= 187625.8921, valid metric= 0.7832
+2024-04-23 01:55 INFO     epoch=0, batch=2351, train loss= 183785.2446, valid metric= 0.7830
+2024-04-23 01:55 INFO     epoch=0, batch=2401, train loss= 180097.0432, valid metric= 0.8029.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:55 INFO     epoch=0, batch=2451, train loss= 176569.6750, valid metric= 0.7798
+2024-04-23 01:55 INFO     epoch=0, batch=2501, train loss= 173165.0950, valid metric= 0.7557
+2024-04-23 01:55 INFO     epoch=0, batch=2551, train loss= 169923.9205, valid metric= 0.7757
+2024-04-23 01:55 INFO     epoch=0, batch=2601, train loss= 166783.4190, valid metric= 0.7673
+2024-04-23 01:55 INFO     epoch=0, batch=2651, train loss= 163722.4904, valid metric= 0.7848
+2024-04-23 01:56 INFO     epoch=0, batch=2701, train loss= 160770.1150, valid metric= 0.7764
+2024-04-23 01:56 INFO     epoch=0, batch=2751, train loss= 157926.1407, valid metric= 0.8103.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:56 INFO     epoch=0, batch=2801, train loss= 155190.3387, valid metric= 0.8013
+2024-04-23 01:56 INFO     epoch=0, batch=2851, train loss= 152542.5641, valid metric= 0.7905
+2024-04-23 01:56 INFO     epoch=0, batch=2901, train loss= 149980.0405, valid metric= 0.7983
+2024-04-23 01:56 INFO     epoch=0, batch=2951, train loss= 147494.4626, valid metric= 0.8098
+2024-04-23 01:56 INFO     epoch=0, batch=3001, train loss= 145081.7935, valid metric= 0.7946
+2024-04-23 01:56 INFO     epoch=0, batch=3051, train loss= 142744.6496, valid metric= 0.7858
+2024-04-23 01:56 INFO     epoch=0, batch=3101, train loss= 140498.3555, valid metric= 0.8116.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:56 INFO     epoch=0, batch=3151, train loss= 138303.0637, valid metric= 0.8112
+2024-04-23 01:57 INFO     epoch=0, batch=3201, train loss= 136178.0369, valid metric= 0.7684
+2024-04-23 01:57 INFO     epoch=0, batch=3251, train loss= 134127.9941, valid metric= 0.7633
+2024-04-23 01:57 INFO     epoch=0, batch=3301, train loss= 132142.0199, valid metric= 0.8052
+2024-04-23 01:57 INFO     epoch=0, batch=3351, train loss= 130197.5785, valid metric= 0.7974
+2024-04-23 01:57 INFO     epoch=0, batch=3401, train loss= 128307.7897, valid metric= 0.7959
+2024-04-23 01:57 INFO     epoch=0, batch=3451, train loss= 126476.5374, valid metric= 0.7847
+2024-04-23 01:57 INFO     epoch=0, batch=3501, train loss= 124702.3205, valid metric= 0.7311
+2024-04-23 01:57 INFO     epoch=0, batch=3551, train loss= 122974.6396, valid metric= 0.8048
+2024-04-23 01:57 INFO     epoch=0, batch=3601, train loss= 121290.0239, valid metric= 0.8092
+2024-04-23 01:57 INFO     epoch=0, batch=3651, train loss= 119659.7957, valid metric= 0.7708
+2024-04-23 01:58 INFO     epoch=0, batch=3701, train loss= 118069.3456, valid metric= 0.8013
+2024-04-23 01:58 INFO     epoch=0, batch=3751, train loss= 116512.2542, valid metric= 0.7908
+2024-04-23 01:58 INFO     epoch=0, batch=3801, train loss= 114995.3345, valid metric= 0.7973
+2024-04-23 01:58 INFO     epoch=0, batch=3851, train loss= 113517.6926, valid metric= 0.8228.
+Find better model, saved to ./checkpoints/2024_0423(1713808209)\best_model.xz.
+2024-04-23 01:58 INFO     epoch=0, batch=3901, train loss= 112076.9398, valid metric= 0.7921
+2024-04-23 01:58 INFO     epoch=0, batch=3951, train loss= 110672.6596, valid metric= 0.7937
+2024-04-23 01:58 INFO     epoch=0, batch=4001, train loss= 109304.7998, valid metric= 0.7896
+2024-04-23 01:58 INFO     epoch=0, batch=4051, train loss= 107967.2094, valid metric= 0.8142
+2024-04-23 01:58 INFO     epoch=0, batch=4101, train loss= 106662.4646, valid metric= 0.7983
+2024-04-23 01:58 INFO     epoch=0, batch=4151, train loss= 105386.1030, valid metric= 0.7508
+2024-04-23 01:59 INFO     epoch=0, batch=4201, train loss= 104147.3445, valid metric= 0.7084
+2024-04-23 01:59 INFO     epoch=0, batch=4251, train loss= 102937.9734, valid metric= 0.7783
+2024-04-23 01:59 INFO     epoch=0, batch=4301, train loss= 101751.1630, valid metric= 0.7878
+2024-04-23 01:59 INFO     epoch=0, batch=4351, train loss= 100589.8947, valid metric= 0.7981
+2024-04-23 01:59 INFO     epoch=0, batch=4401, train loss= 99454.3393, valid metric= 0.7977
+2024-04-23 01:59 INFO     epoch=0, batch=4451, train loss= 98344.1109, valid metric= 0.7686
+2024-04-23 01:59 INFO     epoch=0, batch=4501, train loss= 97258.4665, valid metric= 0.7621
+2024-04-23 01:59 INFO     epoch=0, batch=4551, train loss= 96197.9695, valid metric= 0.7607
+2024-04-23 01:59 INFO     epoch=0, batch=4601, train loss= 95159.5842, valid metric= 0.7582
+2024-04-23 01:59 INFO     epoch=0, batch=4651, train loss= 94141.8389, valid metric= 0.7903
+2024-04-23 01:59 INFO     epoch=0, batch=4701, train loss= 93145.5199, valid metric= 0.7903
+2024-04-23 02:00 INFO     epoch=0, batch=4751, train loss= 92170.1223, valid metric= 0.7755
+2024-04-23 02:00 INFO     epoch=0, batch=4801, train loss= 91215.8091, valid metric= 0.7971
+2024-04-23 02:00 INFO     epoch=0, batch=4851, train loss= 90280.8288, valid metric= 0.7575
+2024-04-23 02:00 INFO     epoch=0, batch=4901, train loss= 89362.9886, valid metric= 0.7724
+2024-04-23 02:00 INFO     epoch=0, batch=4951, train loss= 88463.2417, valid metric= 0.7626
+2024-04-23 02:00 INFO     epoch=0, batch=5001, train loss= 87585.6671, valid metric= 0.7438
+2024-04-23 02:00 INFO     epoch=0, batch=5051, train loss= 86721.4065, valid metric= 0.7325
+2024-04-23 02:00 INFO     epoch=0, batch=5101, train loss= 85873.1098, valid metric= 0.6654
+2024-04-23 02:00 INFO     epoch=0, batch=5151, train loss= 85042.4638, valid metric= 0.6986
+2024-04-23 02:00 INFO     epoch=0, batch=5201, train loss= 84226.0281, valid metric= 0.6881
+2024-04-23 02:01 INFO     epoch=0, batch=5251, train loss= 83424.7291, valid metric= 0.6533
+2024-04-23 02:01 INFO     epoch=0, batch=5301, train loss= 82639.0317, valid metric= 0.6660
+2024-04-23 02:01 INFO     epoch=0, batch=5351, train loss= 81868.1247, valid metric= 0.6551
+2024-04-23 02:01 INFO     epoch=0, batch=5401, train loss= 81111.5431, valid metric= 0.6530
+2024-04-23 02:01 INFO     epoch=0, batch=5451, train loss= 80369.2695, valid metric= 0.6274
+2024-04-23 02:01 INFO     epoch=0, batch=5501, train loss= 79639.1780, valid metric= 0.6073
+2024-04-23 02:01 INFO     epoch=0, batch=5551, train loss= 78922.3680, valid metric= 0.6052
+2024-04-23 02:01 INFO     epoch=0, batch=5601, train loss= 78218.0433, valid metric= 0.6049
+2024-04-23 02:01 INFO     epoch=0, batch=5651, train loss= 77527.0175, valid metric= 0.5974
+2024-04-23 02:01 INFO     epoch=0, batch=5701, train loss= 76847.5251, valid metric= 0.5681
+2024-04-23 02:02 INFO     epoch=0, batch=5751, train loss= 76180.1119, valid metric= 0.5462
+2024-04-23 02:02 INFO     training done, best metric = 0.8228333333333333
+2024-04-23 02:02 INFO     test done, metric = 0.812

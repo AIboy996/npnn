@@ -68,3 +68,11 @@ no|train_id|accuracy|hidden_size|batch_size|learning_rate|regularization|regular
 4|2024_0423(1713857657)|0.8373|[384]|3|0.002|l2|0.001
 
 train log file and saved model weights can be found in `./logs` and `./checkpoints` folder.
+
+### Experiments
+
+See [report.ipynb](report.ipynb) or more readable version: [report.pdf](report.pdf).
+
+## LICENSE
+
+MIT
